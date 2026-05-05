@@ -20,7 +20,7 @@ class _HomeScreenState extends State<HomeScreen> {
 
   final List<Widget> _screens = [
     const _HomeTab(),
-    const QuizScreen(),
+    QuizScreen(),
     const ChatScreen(),
     const RoadmapScreen(),
     const ProfileScreen(),
@@ -75,7 +75,7 @@ class _HomeTab extends StatefulWidget {
 }
 
 class _HomeTabState extends State<_HomeTab> {
-  String _userName = 'Student';
+  String _userName = 'Khaled';
   String? _savedTrack;
   bool _apiOnline = false;
 
@@ -284,7 +284,7 @@ class _HomeTabState extends State<_HomeTab> {
                     ),
                     onPressed: () => Navigator.push(
                       context,
-                      MaterialPageRoute(builder: (_) => const QuizScreen()),
+                      MaterialPageRoute(builder: (_) => QuizScreen()),
                     ),
                     child: const Text(
                       'Start Quiz →',

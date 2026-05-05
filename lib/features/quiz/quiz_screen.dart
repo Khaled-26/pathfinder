@@ -80,11 +80,11 @@ class _QuizScreenState extends State<QuizScreen> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            const Row(
+            Row(
               children: [
-                Icon(Icons.quiz, color: AppTheme.primary),
-                SizedBox(width: 8),
-                Text(
+                const Icon(Icons.quiz, color: AppTheme.primary),
+                const SizedBox(width: 8),
+                const Text(
                   'Skill Assessment',
                   style: TextStyle(
                     color: Colors.white,
