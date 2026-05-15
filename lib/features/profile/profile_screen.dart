@@ -17,6 +17,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
   String _email = '';
   String? _imagePath;
   String? _careerTrack;
+  String _university = 'Ain Shams University';
+  String _program = 'Software Engineering';
 
   @override
   void initState() {
@@ -32,6 +34,9 @@ class _ProfileScreenState extends State<ProfileScreen> {
         _email = prefs.getString('user_email') ?? '';
         _imagePath = prefs.getString('profile_image');
         _careerTrack = prefs.getString('career_track');
+        _university =
+            prefs.getString('user_university') ?? 'Ain Shams University';
+        _program = prefs.getString('user_program') ?? 'Software Engineering';
       });
     }
   }
@@ -74,7 +79,6 @@ class _ProfileScreenState extends State<ProfileScreen> {
               ),
             ),
             const SizedBox(height: 28),
-            // Profile Image
             GestureDetector(
               onTap: _pickImage,
               child: Stack(
@@ -134,7 +138,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   border: Border.all(color: AppTheme.primary.withOpacity(0.4)),
                 ),
                 child: Text(
-                  '🎯 $_careerTrack',
+                  '$_careerTrack',
                   style: const TextStyle(
                     color: AppTheme.primary,
                     fontSize: 12,
@@ -149,17 +153,10 @@ class _ProfileScreenState extends State<ProfileScreen> {
             const SizedBox(height: 10),
             _InfoCard(icon: Icons.email, title: 'Email', value: _email),
             const SizedBox(height: 10),
-            const _InfoCard(
-              icon: Icons.school,
-              title: 'University',
-              value: 'Ain Shams University',
-            ),
+            _InfoCard(
+                icon: Icons.school, title: 'University', value: _university),
             const SizedBox(height: 10),
-            const _InfoCard(
-              icon: Icons.code,
-              title: 'Program',
-              value: 'Software Engineering',
-            ),
+            _InfoCard(icon: Icons.code, title: 'Program', value: _program),
             const SizedBox(height: 28),
             SizedBox(
               width: double.infinity,
@@ -172,10 +169,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
                 ),
                 onPressed: _logout,
                 icon: const Icon(Icons.logout),
-                label: const Text(
-                  'Logout',
-                  style: TextStyle(fontSize: 15, fontFamily: 'Poppins'),
-                ),
+                label: const Text('Logout',
+                    style: TextStyle(fontSize: 15, fontFamily: 'Poppins')),
               ),
             ),
           ],
@@ -219,22 +214,16 @@ class _InfoCard extends StatelessWidget {
           Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Text(
-                title,
-                style: const TextStyle(
-                  color: AppTheme.textSecondary,
-                  fontSize: 11,
-                  fontFamily: 'Poppins',
-                ),
-              ),
-              Text(
-                value,
-                style: const TextStyle(
-                  color: Colors.white,
-                  fontWeight: FontWeight.w600,
-                  fontFamily: 'Poppins',
-                ),
-              ),
+              Text(title,
+                  style: const TextStyle(
+                      color: AppTheme.textSecondary,
+                      fontSize: 11,
+                      fontFamily: 'Poppins')),
+              Text(value,
+                  style: const TextStyle(
+                      color: Colors.white,
+                      fontWeight: FontWeight.w600,
+                      fontFamily: 'Poppins')),
             ],
           ),
         ],

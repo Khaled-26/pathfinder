@@ -2,6 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:pathfinder/core/theme/app_theme.dart';
 import 'package:pathfinder/features/roadmap/roadmap_screen.dart';
 import 'package:pathfinder/shared/widgets/api_service.dart';
+import 'package:pathfinder/shared/widgets/pdf_service.dart';
+import 'package:share_plus/share_plus.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class ResultScreen extends StatefulWidget {
   final Map<String, int> answers;
@@ -103,6 +106,29 @@ class _ResultScreenState extends State<ResultScreen> {
     }
   }
 
+  void _shareResult(String track) {
+    Share.share(
+      ' My PathFinder Career Result!\n\n'
+      'I took the PathFinder career assessment and my recommended track is:\n\n'
+      '✨ $track ✨\n\n'
+      'Find your career path too! ',
+      subject: 'My PathFinder Career Result',
+    );
+  }
+
+  void _downloadPdf(String track) async {
+    final prefs = await SharedPreferences.getInstance();
+    final name = prefs.getString('user_name') ?? 'Student';
+    final email = prefs.getString('user_email') ?? '';
+
+    await PdfService.generateCareerReport(
+      userName: name,
+      userEmail: email,
+      careerTrack: track,
+      answers: widget.answers,
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     final track = _getCareerTrack();
@@ -131,7 +157,7 @@ class _ResultScreenState extends State<ResultScreen> {
               ),
               const SizedBox(height: 20),
               const Text(
-                '🎉 Your Result!',
+                ' Your Result!',
                 style: TextStyle(
                   color: Colors.white,
                   fontSize: 26,
@@ -198,6 +224,7 @@ class _ResultScreenState extends State<ResultScreen> {
                 ),
               ),
               const SizedBox(height: 20),
+
               // Save Button
               if (!_saved)
                 SizedBox(
@@ -215,8 +242,7 @@ class _ResultScreenState extends State<ResultScreen> {
                         ? const SizedBox(
                             width: 14,
                             height: 14,
-                            child: CircularProgressIndicator(strokeWidth: 2),
-                          )
+                            child: CircularProgressIndicator(strokeWidth: 2))
                         : const Icon(Icons.save),
                     label: Text(
                       _isSaving ? 'Saving...' : 'Save Result',
@@ -244,18 +270,59 @@ class _ResultScreenState extends State<ResultScreen> {
                     ],
                   ),
                 ),
+              const SizedBox(height: 12),
+
+              // Share Button
+              SizedBox(
+                width: double.infinity,
+                child: ElevatedButton.icon(
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: Colors.green,
+                    padding: const EdgeInsets.symmetric(vertical: 13),
+                    shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(12)),
+                  ),
+                  onPressed: () => _shareResult(track),
+                  icon: const Icon(Icons.share),
+                  label: const Text('Share My Result 📤',
+                      style: TextStyle(
+                          fontSize: 15,
+                          fontFamily: 'Poppins',
+                          fontWeight: FontWeight.bold)),
+                ),
+              ),
+              const SizedBox(height: 12),
+
+              // PDF Button
+              SizedBox(
+                width: double.infinity,
+                child: ElevatedButton.icon(
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: const Color(0xFF800020),
+                    padding: const EdgeInsets.symmetric(vertical: 13),
+                    shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(12)),
+                  ),
+                  onPressed: () => _downloadPdf(track),
+                  icon: const Icon(Icons.picture_as_pdf),
+                  label: const Text('Download PDF Report 📄',
+                      style: TextStyle(
+                          fontSize: 15,
+                          fontFamily: 'Poppins',
+                          fontWeight: FontWeight.bold)),
+                ),
+              ),
               const SizedBox(height: 20),
+
+              // Skills Breakdown
               const Align(
                 alignment: Alignment.centerLeft,
-                child: Text(
-                  'Skills Breakdown',
-                  style: TextStyle(
-                    color: Colors.white,
-                    fontSize: 16,
-                    fontWeight: FontWeight.bold,
-                    fontFamily: 'Poppins',
-                  ),
-                ),
+                child: Text('Skills Breakdown',
+                    style: TextStyle(
+                        color: Colors.white,
+                        fontSize: 16,
+                        fontWeight: FontWeight.bold,
+                        fontFamily: 'Poppins')),
               ),
               const SizedBox(height: 12),
               ...widget.answers.entries.map((e) => Padding(
@@ -293,6 +360,8 @@ class _ResultScreenState extends State<ResultScreen> {
                     ),
                   )),
               const SizedBox(height: 24),
+
+              // View Roadmap Button
               SizedBox(
                 width: double.infinity,
                 child: ElevatedButton(
@@ -307,13 +376,11 @@ class _ResultScreenState extends State<ResultScreen> {
                     MaterialPageRoute(
                         builder: (_) => RoadmapScreen(careerTrack: track)),
                   ),
-                  child: const Text(
-                    'View My Roadmap 🗺️',
-                    style: TextStyle(
-                        fontSize: 15,
-                        fontWeight: FontWeight.bold,
-                        fontFamily: 'Poppins'),
-                  ),
+                  child: const Text('View My Roadmap 🗺️',
+                      style: TextStyle(
+                          fontSize: 15,
+                          fontWeight: FontWeight.bold,
+                          fontFamily: 'Poppins')),
                 ),
               ),
               const SizedBox(height: 12),

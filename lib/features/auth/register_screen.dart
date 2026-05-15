@@ -15,6 +15,8 @@ class _RegisterScreenState extends State<RegisterScreen> {
   final _nameController = TextEditingController();
   final _emailController = TextEditingController();
   final _passwordController = TextEditingController();
+  final _universityController = TextEditingController();
+  final _programController = TextEditingController();
   bool _isLoading = false;
   bool _obscurePassword = true;
 
@@ -23,13 +25,17 @@ class _RegisterScreenState extends State<RegisterScreen> {
     _nameController.dispose();
     _emailController.dispose();
     _passwordController.dispose();
+    _universityController.dispose();
+    _programController.dispose();
     super.dispose();
   }
 
   void _register() async {
     if (_nameController.text.isEmpty ||
         _emailController.text.isEmpty ||
-        _passwordController.text.isEmpty) {
+        _passwordController.text.isEmpty ||
+        _universityController.text.isEmpty ||
+        _programController.text.isEmpty) {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(content: Text('Please fill all fields')),
       );
@@ -39,20 +45,47 @@ class _RegisterScreenState extends State<RegisterScreen> {
     setState(() => _isLoading = true);
 
     try {
-      await FirebaseAuth.instance.createUserWithEmailAndPassword(
+      final credential =
+          await FirebaseAuth.instance.createUserWithEmailAndPassword(
         email: _emailController.text.trim(),
         password: _passwordController.text.trim(),
       );
 
-      await FirebaseAuth.instance.currentUser
-          ?.updateDisplayName(_nameController.text.trim());
+      await credential.user?.updateDisplayName(_nameController.text.trim());
+      await credential.user?.reload();
+      await credential.user?.sendEmailVerification();
 
       final prefs = await SharedPreferences.getInstance();
       await prefs.setString('user_name', _nameController.text.trim());
       await prefs.setString('user_email', _emailController.text.trim());
+      await prefs.setString(
+          'user_university', _universityController.text.trim());
+      await prefs.setString('user_program', _programController.text.trim());
       await prefs.setBool('is_logged_in', true);
 
+      setState(() => _isLoading = false);
+
       if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Row(
+              children: [
+                Icon(Icons.mark_email_read, color: Colors.white),
+                SizedBox(width: 8),
+                Expanded(
+                  child: Text(
+                    '✅ Verification email sent! Please check your inbox.',
+                    style: TextStyle(fontFamily: 'Poppins'),
+                  ),
+                ),
+              ],
+            ),
+            backgroundColor: Colors.green,
+            duration: Duration(seconds: 3),
+            behavior: SnackBarBehavior.floating,
+          ),
+        );
+        await Future.delayed(const Duration(seconds: 2));
         Navigator.pushReplacement(
           context,
           MaterialPageRoute(builder: (_) => const HomeScreen()),
@@ -60,12 +93,10 @@ class _RegisterScreenState extends State<RegisterScreen> {
       }
     } on FirebaseAuthException catch (e) {
       String message = 'Registration failed';
-      if (e.code == 'weak-password') {
+      if (e.code == 'weak-password')
         message = 'Password is too weak (min 6 characters)';
-      }
-      if (e.code == 'email-already-in-use') {
+      if (e.code == 'email-already-in-use')
         message = 'Email already registered';
-      }
       if (e.code == 'invalid-email') message = 'Invalid email address';
 
       if (mounted) {
@@ -87,7 +118,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              const SizedBox(height: 30),
+              const SizedBox(height: 24),
               Center(
                 child: Column(
                   children: [
@@ -98,11 +129,8 @@ class _RegisterScreenState extends State<RegisterScreen> {
                         color: AppTheme.primary,
                         borderRadius: BorderRadius.circular(18),
                       ),
-                      child: const Icon(
-                        Icons.explore,
-                        color: Colors.white,
-                        size: 38,
-                      ),
+                      child: const Icon(Icons.explore,
+                          color: Colors.white, size: 38),
                     ),
                     const SizedBox(height: 12),
                     const Text(
@@ -117,7 +145,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                   ],
                 ),
               ),
-              const SizedBox(height: 36),
+              const SizedBox(height: 28),
               const Text(
                 'Create Account',
                 style: TextStyle(
@@ -131,46 +159,25 @@ class _RegisterScreenState extends State<RegisterScreen> {
               const Text(
                 'Start your career journey',
                 style: TextStyle(
-                  color: AppTheme.textSecondary,
-                  fontFamily: 'Poppins',
-                ),
+                    color: AppTheme.textSecondary, fontFamily: 'Poppins'),
               ),
-              const SizedBox(height: 28),
-              TextField(
+              const SizedBox(height: 24),
+              // Full Name
+              _buildTextField(
                 controller: _nameController,
-                style: const TextStyle(color: Colors.white),
-                decoration: InputDecoration(
-                  labelText: 'Full Name',
-                  labelStyle: const TextStyle(color: AppTheme.textSecondary),
-                  prefixIcon:
-                      const Icon(Icons.person_outline, color: AppTheme.primary),
-                  filled: true,
-                  fillColor: AppTheme.surface,
-                  border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(12),
-                    borderSide: BorderSide.none,
-                  ),
-                ),
+                label: 'Full Name',
+                icon: Icons.person_outline,
               ),
-              const SizedBox(height: 16),
-              TextField(
+              const SizedBox(height: 14),
+              // Email
+              _buildTextField(
                 controller: _emailController,
+                label: 'Email',
+                icon: Icons.email_outlined,
                 keyboardType: TextInputType.emailAddress,
-                style: const TextStyle(color: Colors.white),
-                decoration: InputDecoration(
-                  labelText: 'Email',
-                  labelStyle: const TextStyle(color: AppTheme.textSecondary),
-                  prefixIcon:
-                      const Icon(Icons.email_outlined, color: AppTheme.primary),
-                  filled: true,
-                  fillColor: AppTheme.surface,
-                  border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(12),
-                    borderSide: BorderSide.none,
-                  ),
-                ),
               ),
-              const SizedBox(height: 16),
+              const SizedBox(height: 14),
+              // Password
               TextField(
                 controller: _passwordController,
                 obscureText: _obscurePassword,
@@ -198,6 +205,20 @@ class _RegisterScreenState extends State<RegisterScreen> {
                   ),
                 ),
               ),
+              const SizedBox(height: 14),
+              // University
+              _buildTextField(
+                controller: _universityController,
+                label: 'University',
+                icon: Icons.school_outlined,
+              ),
+              const SizedBox(height: 14),
+              // Program
+              _buildTextField(
+                controller: _programController,
+                label: 'Program / Major',
+                icon: Icons.code_outlined,
+              ),
               const SizedBox(height: 28),
               SizedBox(
                 width: double.infinity,
@@ -222,9 +243,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                   const Text(
                     'Already have an account? ',
                     style: TextStyle(
-                      color: AppTheme.textSecondary,
-                      fontFamily: 'Poppins',
-                    ),
+                        color: AppTheme.textSecondary, fontFamily: 'Poppins'),
                   ),
                   GestureDetector(
                     onTap: () => Navigator.pop(context),
@@ -241,6 +260,30 @@ class _RegisterScreenState extends State<RegisterScreen> {
               ),
             ],
           ),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildTextField({
+    required TextEditingController controller,
+    required String label,
+    required IconData icon,
+    TextInputType keyboardType = TextInputType.text,
+  }) {
+    return TextField(
+      controller: controller,
+      keyboardType: keyboardType,
+      style: const TextStyle(color: Colors.white),
+      decoration: InputDecoration(
+        labelText: label,
+        labelStyle: const TextStyle(color: AppTheme.textSecondary),
+        prefixIcon: Icon(icon, color: AppTheme.primary),
+        filled: true,
+        fillColor: AppTheme.surface,
+        border: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(12),
+          borderSide: BorderSide.none,
         ),
       ),
     );

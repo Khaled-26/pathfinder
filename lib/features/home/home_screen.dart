@@ -20,7 +20,7 @@ class _HomeScreenState extends State<HomeScreen> {
 
   final List<Widget> _screens = [
     const _HomeTab(),
-    QuizScreen(),
+    const QuizScreen(),
     const ChatScreen(),
     const RoadmapScreen(),
     const ProfileScreen(),
@@ -284,7 +284,7 @@ class _HomeTabState extends State<_HomeTab> {
                     ),
                     onPressed: () => Navigator.push(
                       context,
-                      MaterialPageRoute(builder: (_) => QuizScreen()),
+                      MaterialPageRoute(builder: (_) => const QuizScreen()),
                     ),
                     child: const Text(
                       'Start Quiz →',

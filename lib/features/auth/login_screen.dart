@@ -42,8 +42,13 @@ class _LoginScreenState extends State<LoginScreen> {
         password: _passwordController.text.trim(),
       );
 
+      final user = FirebaseAuth.instance.currentUser;
       final prefs = await SharedPreferences.getInstance();
       await prefs.setString('user_email', _emailController.text.trim());
+      await prefs.setString(
+        'user_name',
+        user?.displayName ?? _emailController.text.split('@')[0],
+      );
       await prefs.setBool('is_logged_in', true);
 
       if (mounted) {
@@ -57,6 +62,7 @@ class _LoginScreenState extends State<LoginScreen> {
       if (e.code == 'user-not-found') message = 'No user found with this email';
       if (e.code == 'wrong-password') message = 'Wrong password';
       if (e.code == 'invalid-email') message = 'Invalid email address';
+      if (e.code == 'invalid-credential') message = 'Invalid email or password';
 
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
@@ -65,6 +71,56 @@ class _LoginScreenState extends State<LoginScreen> {
       }
     } finally {
       setState(() => _isLoading = false);
+    }
+  }
+
+  void _forgotPassword() async {
+    if (_emailController.text.isEmpty) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('Please enter your email first'),
+          backgroundColor: Colors.orange,
+        ),
+      );
+      return;
+    }
+
+    try {
+      await FirebaseAuth.instance.sendPasswordResetEmail(
+        email: _emailController.text.trim(),
+      );
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Row(
+              children: [
+                const Icon(Icons.mark_email_read, color: Colors.white),
+                const SizedBox(width: 8),
+                Expanded(
+                  child: Text(
+                    'Password reset email sent to ${_emailController.text.trim()}',
+                    style: const TextStyle(fontFamily: 'Poppins'),
+                  ),
+                ),
+              ],
+            ),
+            backgroundColor: Colors.green,
+            behavior: SnackBarBehavior.floating,
+            shape:
+                RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+          ),
+        );
+      }
+    } on FirebaseAuthException catch (e) {
+      String message = 'Failed to send reset email';
+      if (e.code == 'user-not-found') message = 'No user found with this email';
+      if (e.code == 'invalid-email') message = 'Invalid email address';
+
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text(message), backgroundColor: Colors.red),
+        );
+      }
     }
   }
 
@@ -170,7 +226,24 @@ class _LoginScreenState extends State<LoginScreen> {
                   ),
                 ),
               ),
-              const SizedBox(height: 28),
+              const SizedBox(height: 8),
+              // Forgot Password
+              Align(
+                alignment: Alignment.centerRight,
+                child: GestureDetector(
+                  onTap: _forgotPassword,
+                  child: const Text(
+                    'Forgot Password?',
+                    style: TextStyle(
+                      color: AppTheme.primary,
+                      fontFamily: 'Poppins',
+                      fontWeight: FontWeight.w600,
+                      fontSize: 13,
+                    ),
+                  ),
+                ),
+              ),
+              const SizedBox(height: 20),
               SizedBox(
                 width: double.infinity,
                 child: ElevatedButton(
