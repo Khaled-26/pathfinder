@@ -38,7 +38,46 @@ class _LoginScreenState extends State<LoginScreen> {
         email: _emailController.text.trim(),
         password: _passwordController.text.trim(),
       );
+
       final user = FirebaseAuth.instance.currentUser;
+
+// Check email verification
+      if (user != null && !user.emailVerified) {
+        await FirebaseAuth.instance.signOut();
+        if (mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: const Row(
+                children: [
+                  Icon(Icons.mark_email_unread_rounded, color: Colors.white),
+                  SizedBox(width: 8),
+                  Expanded(
+                    child: Text(
+                      'Please verify your email first. Check your inbox.',
+                      style: TextStyle(fontFamily: 'Poppins'),
+                    ),
+                  ),
+                ],
+              ),
+              backgroundColor: Colors.orange,
+              behavior: SnackBarBehavior.floating,
+              shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(12)),
+              duration: const Duration(seconds: 4),
+              action: SnackBarAction(
+                label: 'Resend',
+                textColor: Colors.white,
+                onPressed: () async {
+                  await user.sendEmailVerification();
+                },
+              ),
+            ),
+          );
+        }
+        setState(() => _isLoading = false);
+        return;
+      }
+
       final prefs = await SharedPreferences.getInstance();
       await prefs.setString('user_email', _emailController.text.trim());
       await prefs.setString('user_name',
