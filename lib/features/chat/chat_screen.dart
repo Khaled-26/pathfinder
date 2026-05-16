@@ -18,7 +18,6 @@ class _ChatScreenState extends State<ChatScreen> {
   @override
   void initState() {
     super.initState();
-    // Add welcome message
     _messages.add({
       'text':
           'Hi! I\'m your PathFinder AI assistant 🤖\n\nAsk me anything about career paths, required skills, or learning resources!',
@@ -44,28 +43,17 @@ class _ChatScreenState extends State<ChatScreen> {
     if (text.isEmpty) return;
 
     setState(() {
-      _messages.add({
-        'text': text,
-        'isUser': true,
-        'time': _getTime(),
-      });
+      _messages.add({'text': text, 'isUser': true, 'time': _getTime()});
       _isLoading = true;
     });
-
     _messageController.clear();
     _scrollToBottom();
 
     final response = await ApiService.sendMessage(text);
-
     setState(() {
-      _messages.add({
-        'text': response,
-        'isUser': false,
-        'time': _getTime(),
-      });
+      _messages.add({'text': response, 'isUser': false, 'time': _getTime()});
       _isLoading = false;
     });
-
     _scrollToBottom();
   }
 
@@ -91,47 +79,37 @@ class _ChatScreenState extends State<ChatScreen> {
             padding: const EdgeInsets.all(20),
             decoration: BoxDecoration(
               color: AppTheme.surface,
-              boxShadow: [
-                BoxShadow(
-                  color: Colors.black.withOpacity(0.2),
-                  blurRadius: 8,
-                  offset: const Offset(0, 2),
-                ),
-              ],
+              border: Border(bottom: BorderSide(color: AppTheme.border)),
             ),
             child: Row(
               children: [
                 Container(
-                  width: 42,
-                  height: 42,
-                  decoration: const BoxDecoration(
-                    color: AppTheme.primary,
+                  width: 46,
+                  height: 46,
+                  decoration: BoxDecoration(
+                    gradient: LinearGradient(
+                      colors: [AppTheme.primary, AppTheme.secondary],
+                    ),
                     shape: BoxShape.circle,
                   ),
-                  child: const Icon(Icons.psychology,
-                      color: Colors.white, size: 22),
+                  child: const Icon(Icons.psychology_rounded,
+                      color: Colors.white, size: 24),
                 ),
                 const SizedBox(width: 12),
                 const Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Text(
-                      'PathFinder AI',
-                      style: TextStyle(
-                        color: Colors.white,
-                        fontWeight: FontWeight.bold,
-                        fontSize: 16,
-                        fontFamily: 'Poppins',
-                      ),
-                    ),
-                    Text(
-                      'Career Assistant',
-                      style: TextStyle(
-                        color: AppTheme.textSecondary,
-                        fontSize: 12,
-                        fontFamily: 'Poppins',
-                      ),
-                    ),
+                    Text('PathFinder AI',
+                        style: TextStyle(
+                            color: AppTheme.textPrimary,
+                            fontWeight: FontWeight.bold,
+                            fontSize: 16,
+                            fontFamily: 'Poppins')),
+                    Text('Career Assistant',
+                        style: TextStyle(
+                            color: AppTheme.textSecondary,
+                            fontSize: 12,
+                            fontFamily: 'Poppins')),
                   ],
                 ),
                 const Spacer(),
@@ -139,21 +117,19 @@ class _ChatScreenState extends State<ChatScreen> {
                   padding:
                       const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
                   decoration: BoxDecoration(
-                    color: Colors.green.withOpacity(0.15),
+                    color: Colors.green.withOpacity(0.1),
                     borderRadius: BorderRadius.circular(20),
+                    border: Border.all(color: Colors.green.withOpacity(0.3)),
                   ),
                   child: const Row(
                     children: [
                       Icon(Icons.circle, size: 8, color: Colors.green),
                       SizedBox(width: 4),
-                      Text(
-                        'Active',
-                        style: TextStyle(
-                          color: Colors.green,
-                          fontSize: 11,
-                          fontFamily: 'Poppins',
-                        ),
-                      ),
+                      Text('Active',
+                          style: TextStyle(
+                              color: Colors.green,
+                              fontSize: 11,
+                              fontFamily: 'Poppins')),
                     ],
                   ),
                 ),
@@ -168,28 +144,25 @@ class _ChatScreenState extends State<ChatScreen> {
             child: Row(
               children: [
                 _SuggestionChip(
-                  text: 'What skills for AI?',
-                  onTap: () {
-                    _messageController.text = 'What skills do I need for AI?';
-                    _sendMessage();
-                  },
-                ),
+                    text: 'What skills for AI?',
+                    onTap: () {
+                      _messageController.text = 'What skills do I need for AI?';
+                      _sendMessage();
+                    }),
                 _SuggestionChip(
-                  text: 'Best career for me?',
-                  onTap: () {
-                    _messageController.text =
-                        'What is the best career path for a CS student?';
-                    _sendMessage();
-                  },
-                ),
+                    text: 'Best career for CS?',
+                    onTap: () {
+                      _messageController.text =
+                          'What is the best career path for a CS student?';
+                      _sendMessage();
+                    }),
                 _SuggestionChip(
-                  text: 'How to start Data Science?',
-                  onTap: () {
-                    _messageController.text =
-                        'How do I start learning Data Science?';
-                    _sendMessage();
-                  },
-                ),
+                    text: 'How to start Data Science?',
+                    onTap: () {
+                      _messageController.text =
+                          'How do I start learning Data Science?';
+                      _sendMessage();
+                    }),
               ],
             ),
           ),
@@ -206,10 +179,9 @@ class _ChatScreenState extends State<ChatScreen> {
                 }
                 final msg = _messages[index];
                 return _MessageBubble(
-                  text: msg['text'],
-                  isUser: msg['isUser'],
-                  time: msg['time'],
-                );
+                    text: msg['text'],
+                    isUser: msg['isUser'],
+                    time: msg['time']);
               },
             ),
           ),
@@ -219,13 +191,7 @@ class _ChatScreenState extends State<ChatScreen> {
             padding: const EdgeInsets.all(16),
             decoration: BoxDecoration(
               color: AppTheme.surface,
-              boxShadow: [
-                BoxShadow(
-                  color: Colors.black.withOpacity(0.2),
-                  blurRadius: 8,
-                  offset: const Offset(0, -2),
-                ),
-              ],
+              border: Border(top: BorderSide(color: AppTheme.border)),
             ),
             child: Row(
               children: [
@@ -233,26 +199,29 @@ class _ChatScreenState extends State<ChatScreen> {
                   child: TextField(
                     controller: _messageController,
                     style: const TextStyle(
-                      color: Colors.white,
-                      fontFamily: 'Poppins',
-                    ),
+                        color: AppTheme.textPrimary, fontFamily: 'Poppins'),
                     onSubmitted: (_) => _sendMessage(),
                     decoration: InputDecoration(
                       hintText: 'Ask about your career...',
                       hintStyle: const TextStyle(
-                        color: AppTheme.textSecondary,
-                        fontFamily: 'Poppins',
-                      ),
+                          color: AppTheme.textSecondary, fontFamily: 'Poppins'),
                       filled: true,
-                      fillColor: const Color(0xFF0F0F1A),
+                      fillColor: AppTheme.background,
                       border: OutlineInputBorder(
                         borderRadius: BorderRadius.circular(25),
-                        borderSide: BorderSide.none,
+                        borderSide: BorderSide(color: AppTheme.border),
+                      ),
+                      enabledBorder: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(25),
+                        borderSide: BorderSide(color: AppTheme.border),
+                      ),
+                      focusedBorder: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(25),
+                        borderSide:
+                            const BorderSide(color: AppTheme.primary, width: 2),
                       ),
                       contentPadding: const EdgeInsets.symmetric(
-                        horizontal: 18,
-                        vertical: 12,
-                      ),
+                          horizontal: 18, vertical: 12),
                     ),
                   ),
                 ),
@@ -260,16 +229,21 @@ class _ChatScreenState extends State<ChatScreen> {
                 GestureDetector(
                   onTap: _isLoading ? null : _sendMessage,
                   child: Container(
-                    width: 46,
-                    height: 46,
+                    width: 48,
+                    height: 48,
                     decoration: BoxDecoration(
-                      color: _isLoading
-                          ? AppTheme.textSecondary
-                          : AppTheme.primary,
+                      color: _isLoading ? AppTheme.border : AppTheme.primary,
                       shape: BoxShape.circle,
+                      boxShadow: [
+                        if (!_isLoading)
+                          BoxShadow(
+                              color: AppTheme.primary.withOpacity(0.3),
+                              blurRadius: 8,
+                              offset: const Offset(0, 3))
+                      ],
                     ),
-                    child:
-                        const Icon(Icons.send, color: Colors.white, size: 20),
+                    child: const Icon(Icons.send_rounded,
+                        color: Colors.white, size: 20),
                   ),
                 ),
               ],
@@ -286,11 +260,8 @@ class _MessageBubble extends StatelessWidget {
   final bool isUser;
   final String time;
 
-  const _MessageBubble({
-    required this.text,
-    required this.isUser,
-    required this.time,
-  });
+  const _MessageBubble(
+      {required this.text, required this.isUser, required this.time});
 
   @override
   Widget build(BuildContext context) {
@@ -303,14 +274,15 @@ class _MessageBubble extends StatelessWidget {
         children: [
           if (!isUser) ...[
             Container(
-              width: 32,
-              height: 32,
-              decoration: const BoxDecoration(
-                color: AppTheme.primary,
+              width: 34,
+              height: 34,
+              decoration: BoxDecoration(
+                gradient: LinearGradient(
+                    colors: [AppTheme.primary, AppTheme.secondary]),
                 shape: BoxShape.circle,
               ),
-              child:
-                  const Icon(Icons.psychology, color: Colors.white, size: 16),
+              child: const Icon(Icons.psychology_rounded,
+                  color: Colors.white, size: 18),
             ),
             const SizedBox(width: 8),
           ],
@@ -320,10 +292,8 @@ class _MessageBubble extends StatelessWidget {
                   isUser ? CrossAxisAlignment.end : CrossAxisAlignment.start,
               children: [
                 Container(
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: 16,
-                    vertical: 12,
-                  ),
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
                   decoration: BoxDecoration(
                     color: isUser ? AppTheme.primary : AppTheme.surface,
                     borderRadius: BorderRadius.only(
@@ -332,26 +302,28 @@ class _MessageBubble extends StatelessWidget {
                       bottomLeft: Radius.circular(isUser ? 18 : 4),
                       bottomRight: Radius.circular(isUser ? 4 : 18),
                     ),
+                    border: isUser ? null : Border.all(color: AppTheme.border),
+                    boxShadow: [
+                      BoxShadow(
+                          color: Colors.black.withOpacity(0.06),
+                          blurRadius: 8,
+                          offset: const Offset(0, 2))
+                    ],
                   ),
-                  child: Text(
-                    text,
-                    style: TextStyle(
-                      color: isUser ? Colors.white : Colors.white,
-                      fontSize: 14,
-                      fontFamily: 'Poppins',
-                      height: 1.4,
-                    ),
-                  ),
+                  child: Text(text,
+                      style: TextStyle(
+                        color: isUser ? Colors.white : AppTheme.textPrimary,
+                        fontSize: 14,
+                        fontFamily: 'Poppins',
+                        height: 1.4,
+                      )),
                 ),
                 const SizedBox(height: 3),
-                Text(
-                  time,
-                  style: const TextStyle(
-                    color: AppTheme.textSecondary,
-                    fontSize: 10,
-                    fontFamily: 'Poppins',
-                  ),
-                ),
+                Text(time,
+                    style: const TextStyle(
+                        color: AppTheme.textSecondary,
+                        fontSize: 10,
+                        fontFamily: 'Poppins')),
               ],
             ),
           ),
@@ -372,13 +344,15 @@ class _TypingIndicator extends StatelessWidget {
       child: Row(
         children: [
           Container(
-            width: 32,
-            height: 32,
-            decoration: const BoxDecoration(
-              color: AppTheme.primary,
+            width: 34,
+            height: 34,
+            decoration: BoxDecoration(
+              gradient: LinearGradient(
+                  colors: [AppTheme.primary, AppTheme.secondary]),
               shape: BoxShape.circle,
             ),
-            child: const Icon(Icons.psychology, color: Colors.white, size: 16),
+            child: const Icon(Icons.psychology_rounded,
+                color: Colors.white, size: 18),
           ),
           const SizedBox(width: 8),
           Container(
@@ -386,27 +360,22 @@ class _TypingIndicator extends StatelessWidget {
             decoration: BoxDecoration(
               color: AppTheme.surface,
               borderRadius: BorderRadius.circular(18),
+              border: Border.all(color: AppTheme.border),
             ),
-            child: const Row(
+            child: Row(
               mainAxisSize: MainAxisSize.min,
               children: [
                 SizedBox(
-                  width: 40,
-                  height: 20,
-                  child: CircularProgressIndicator(
-                    strokeWidth: 2,
-                    color: AppTheme.primary,
-                  ),
-                ),
-                SizedBox(width: 8),
-                Text(
-                  'Thinking...',
-                  style: TextStyle(
-                    color: AppTheme.textSecondary,
-                    fontSize: 13,
-                    fontFamily: 'Poppins',
-                  ),
-                ),
+                    width: 16,
+                    height: 16,
+                    child: CircularProgressIndicator(
+                        strokeWidth: 2, color: AppTheme.primary)),
+                const SizedBox(width: 8),
+                const Text('Thinking...',
+                    style: TextStyle(
+                        color: AppTheme.textSecondary,
+                        fontSize: 13,
+                        fontFamily: 'Poppins')),
               ],
             ),
           ),
@@ -430,18 +399,16 @@ class _SuggestionChip extends StatelessWidget {
         margin: const EdgeInsets.only(right: 8),
         padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
         decoration: BoxDecoration(
-          color: AppTheme.surface,
+          color: AppTheme.card,
           borderRadius: BorderRadius.circular(20),
-          border: Border.all(color: AppTheme.primary.withOpacity(0.4)),
+          border: Border.all(color: AppTheme.border),
         ),
-        child: Text(
-          text,
-          style: const TextStyle(
-            color: AppTheme.primary,
-            fontSize: 12,
-            fontFamily: 'Poppins',
-          ),
-        ),
+        child: Text(text,
+            style: const TextStyle(
+                color: AppTheme.primary,
+                fontSize: 12,
+                fontFamily: 'Poppins',
+                fontWeight: FontWeight.w500)),
       ),
     );
   }

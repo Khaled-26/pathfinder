@@ -46,17 +46,17 @@ class _ResultScreenState extends State<ResultScreen> {
   IconData _getIcon(String track) {
     switch (track) {
       case 'Artificial Intelligence':
-        return Icons.psychology;
+        return Icons.psychology_rounded;
       case 'Data Science':
-        return Icons.bar_chart;
+        return Icons.bar_chart_rounded;
       case 'Software Development':
-        return Icons.code;
+        return Icons.code_rounded;
       case 'Cybersecurity':
-        return Icons.security;
+        return Icons.security_rounded;
       case 'UI/UX Design':
-        return Icons.design_services;
+        return Icons.design_services_rounded;
       default:
-        return Icons.engineering;
+        return Icons.engineering_rounded;
     }
   }
 
@@ -65,65 +65,52 @@ class _ResultScreenState extends State<ResultScreen> {
       case 'Artificial Intelligence':
         return const Color(0xFF6C63FF);
       case 'Data Science':
-        return const Color(0xFF03DAC6);
+        return const Color(0xFF00897B);
       case 'Software Development':
-        return const Color(0xFFFF6584);
+        return const Color(0xFFE53935);
       case 'Cybersecurity':
-        return const Color(0xFFFFB347);
+        return const Color(0xFFF57C00);
       case 'UI/UX Design':
-        return const Color(0xFFE91E63);
+        return AppTheme.primary;
       default:
-        return const Color(0xFF4CAF50);
+        return const Color(0xFF2E7D32);
     }
   }
 
   void _saveResult(String track) async {
     setState(() => _isSaving = true);
     await ApiService.saveQuizResult(
-      careerTrack: track,
-      answers: widget.answers,
-    );
+        careerTrack: track, answers: widget.answers);
     setState(() {
       _isSaving = false;
       _saved = true;
     });
     if (mounted) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: const Row(
-            children: [
-              Icon(Icons.check_circle, color: Colors.white),
-              SizedBox(width: 8),
-              Text('Result saved!', style: TextStyle(fontFamily: 'Poppins')),
-            ],
-          ),
-          backgroundColor: Colors.green,
-          behavior: SnackBarBehavior.floating,
-          shape:
-              RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-        ),
-      );
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+        content: const Row(children: [
+          Icon(Icons.check_circle, color: Colors.white),
+          SizedBox(width: 8),
+          Text('Result saved!', style: TextStyle(fontFamily: 'Poppins')),
+        ]),
+        backgroundColor: Colors.green,
+        behavior: SnackBarBehavior.floating,
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+      ));
     }
   }
 
   void _shareResult(String track) {
     Share.share(
-      ' My PathFinder Career Result!\n\n'
-      'I took the PathFinder career assessment and my recommended track is:\n\n'
-      '✨ $track ✨\n\n'
-      'Find your career path too! ',
+      '🎯 My PathFinder Career Result!\n\nMy recommended track is:\n✨ $track ✨\n\nFind your career path too! 🚀',
       subject: 'My PathFinder Career Result',
     );
   }
 
   void _downloadPdf(String track) async {
     final prefs = await SharedPreferences.getInstance();
-    final name = prefs.getString('user_name') ?? 'Student';
-    final email = prefs.getString('user_email') ?? '';
-
     await PdfService.generateCareerReport(
-      userName: name,
-      userEmail: email,
+      userName: prefs.getString('user_name') ?? 'Student',
+      userEmail: prefs.getString('user_email') ?? '',
       careerTrack: track,
       answers: widget.answers,
     );
@@ -136,263 +123,248 @@ class _ResultScreenState extends State<ResultScreen> {
     final color = _getColor(track);
 
     return Scaffold(
+      backgroundColor: AppTheme.background,
       body: SafeArea(
         child: SingleChildScrollView(
-          padding: const EdgeInsets.all(24),
+          padding: const EdgeInsets.all(20),
           child: Column(
             children: [
-              Align(
-                alignment: Alignment.centerLeft,
-                child: GestureDetector(
-                  onTap: () => Navigator.pop(context),
-                  child: Container(
-                    padding: const EdgeInsets.all(10),
-                    decoration: BoxDecoration(
-                      color: AppTheme.surface,
-                      borderRadius: BorderRadius.circular(12),
+              Row(
+                children: [
+                  GestureDetector(
+                    onTap: () => Navigator.pop(context),
+                    child: Container(
+                      padding: const EdgeInsets.all(10),
+                      decoration: BoxDecoration(
+                        color: AppTheme.surface,
+                        borderRadius: BorderRadius.circular(12),
+                        border: Border.all(color: AppTheme.border),
+                      ),
+                      child: const Icon(Icons.arrow_back_rounded,
+                          color: AppTheme.textPrimary),
                     ),
-                    child: const Icon(Icons.arrow_back, color: Colors.white),
                   ),
-                ),
+                  const SizedBox(width: 12),
+                  const Text('Your Result',
+                      style: TextStyle(
+                          color: AppTheme.textPrimary,
+                          fontSize: 20,
+                          fontWeight: FontWeight.bold,
+                          fontFamily: 'Poppins')),
+                ],
               ),
-              const SizedBox(height: 20),
-              const Text(
-                ' Your Result!',
-                style: TextStyle(
-                  color: Colors.white,
-                  fontSize: 26,
-                  fontWeight: FontWeight.bold,
-                  fontFamily: 'Poppins',
-                ),
-              ),
-              const SizedBox(height: 6),
-              const Text(
-                'Based on your answers, we recommend:',
-                style: TextStyle(
-                    color: AppTheme.textSecondary, fontFamily: 'Poppins'),
-                textAlign: TextAlign.center,
-              ),
-              const SizedBox(height: 28),
+              const SizedBox(height: 24),
+
+              // Result Card
               Container(
                 width: double.infinity,
                 padding: const EdgeInsets.all(28),
                 decoration: BoxDecoration(
                   gradient: LinearGradient(
-                    colors: [color, color.withOpacity(0.6)],
+                    colors: [color, color.withOpacity(0.7)],
                     begin: Alignment.topLeft,
                     end: Alignment.bottomRight,
                   ),
-                  borderRadius: BorderRadius.circular(24),
+                  borderRadius: BorderRadius.circular(28),
                   boxShadow: [
                     BoxShadow(
-                      color: color.withOpacity(0.4),
-                      blurRadius: 20,
-                      offset: const Offset(0, 8),
-                    )
+                        color: color.withOpacity(0.35),
+                        blurRadius: 24,
+                        offset: const Offset(0, 10))
                   ],
                 ),
                 child: Column(
                   children: [
                     Container(
-                      width: 72,
-                      height: 72,
+                      width: 80,
+                      height: 80,
                       decoration: BoxDecoration(
                         color: Colors.white.withOpacity(0.2),
                         shape: BoxShape.circle,
                       ),
-                      child: Icon(icon, color: Colors.white, size: 38),
+                      child: Icon(icon, color: Colors.white, size: 42),
                     ),
-                    const SizedBox(height: 14),
-                    Text(
-                      track,
-                      style: const TextStyle(
-                        color: Colors.white,
-                        fontSize: 20,
-                        fontWeight: FontWeight.bold,
-                        fontFamily: 'Poppins',
+                    const SizedBox(height: 16),
+                    const Text('🎉 Congratulations!',
+                        style: TextStyle(
+                            color: Colors.white70,
+                            fontSize: 14,
+                            fontFamily: 'Poppins')),
+                    const SizedBox(height: 4),
+                    Text(track,
+                        style: const TextStyle(
+                            color: Colors.white,
+                            fontSize: 22,
+                            fontWeight: FontWeight.bold,
+                            fontFamily: 'Poppins'),
+                        textAlign: TextAlign.center),
+                    const SizedBox(height: 8),
+                    Container(
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: 16, vertical: 6),
+                      decoration: BoxDecoration(
+                        color: Colors.white.withOpacity(0.2),
+                        borderRadius: BorderRadius.circular(20),
                       ),
-                      textAlign: TextAlign.center,
-                    ),
-                    const SizedBox(height: 6),
-                    const Text(
-                      'This is your recommended career path',
-                      style: TextStyle(
-                          color: Colors.white70, fontFamily: 'Poppins'),
-                      textAlign: TextAlign.center,
+                      child: const Text('Your Recommended Career Path',
+                          style: TextStyle(
+                              color: Colors.white,
+                              fontSize: 12,
+                              fontFamily: 'Poppins')),
                     ),
                   ],
                 ),
               ),
               const SizedBox(height: 20),
 
-              // Save Button
+              // Action Buttons
               if (!_saved)
-                SizedBox(
-                  width: double.infinity,
-                  child: OutlinedButton.icon(
-                    style: OutlinedButton.styleFrom(
-                      foregroundColor: color,
-                      side: BorderSide(color: color),
-                      padding: const EdgeInsets.symmetric(vertical: 13),
-                      shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(12)),
-                    ),
-                    onPressed: _isSaving ? null : () => _saveResult(track),
-                    icon: _isSaving
-                        ? const SizedBox(
-                            width: 14,
-                            height: 14,
-                            child: CircularProgressIndicator(strokeWidth: 2))
-                        : const Icon(Icons.save),
-                    label: Text(
-                      _isSaving ? 'Saving...' : 'Save Result',
-                      style: const TextStyle(fontFamily: 'Poppins'),
-                    ),
-                  ),
+                _ActionButton(
+                  label: 'Save Result',
+                  icon: Icons.save_rounded,
+                  color: color,
+                  isOutlined: true,
+                  isLoading: _isSaving,
+                  onTap: () => _saveResult(track),
                 )
               else
                 Container(
                   width: double.infinity,
-                  padding: const EdgeInsets.symmetric(vertical: 12),
+                  padding: const EdgeInsets.symmetric(vertical: 14),
                   decoration: BoxDecoration(
-                    color: Colors.green.withOpacity(0.1),
-                    borderRadius: BorderRadius.circular(12),
+                    color: Colors.green.withOpacity(0.08),
+                    borderRadius: BorderRadius.circular(14),
                     border: Border.all(color: Colors.green.withOpacity(0.3)),
                   ),
                   child: const Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      Icon(Icons.check_circle, color: Colors.green, size: 18),
+                      Icon(Icons.check_circle_rounded,
+                          color: Colors.green, size: 20),
                       SizedBox(width: 8),
                       Text('Result Saved!',
                           style: TextStyle(
-                              color: Colors.green, fontFamily: 'Poppins')),
+                              color: Colors.green,
+                              fontFamily: 'Poppins',
+                              fontWeight: FontWeight.w600)),
                     ],
                   ),
                 ),
-              const SizedBox(height: 12),
-
-              // Share Button
-              SizedBox(
-                width: double.infinity,
-                child: ElevatedButton.icon(
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: Colors.green,
-                    padding: const EdgeInsets.symmetric(vertical: 13),
-                    shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(12)),
-                  ),
-                  onPressed: () => _shareResult(track),
-                  icon: const Icon(Icons.share),
-                  label: const Text('Share My Result 📤',
-                      style: TextStyle(
-                          fontSize: 15,
-                          fontFamily: 'Poppins',
-                          fontWeight: FontWeight.bold)),
-                ),
+              const SizedBox(height: 10),
+              _ActionButton(
+                label: 'Share My Result',
+                icon: Icons.share_rounded,
+                color: Colors.green,
+                onTap: () => _shareResult(track),
               ),
-              const SizedBox(height: 12),
-
-              // PDF Button
-              SizedBox(
-                width: double.infinity,
-                child: ElevatedButton.icon(
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: const Color(0xFF800020),
-                    padding: const EdgeInsets.symmetric(vertical: 13),
-                    shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(12)),
-                  ),
-                  onPressed: () => _downloadPdf(track),
-                  icon: const Icon(Icons.picture_as_pdf),
-                  label: const Text('Download PDF Report 📄',
-                      style: TextStyle(
-                          fontSize: 15,
-                          fontFamily: 'Poppins',
-                          fontWeight: FontWeight.bold)),
-                ),
+              const SizedBox(height: 10),
+              _ActionButton(
+                label: 'Download PDF Report',
+                icon: Icons.picture_as_pdf_rounded,
+                color: AppTheme.primary,
+                onTap: () => _downloadPdf(track),
               ),
-              const SizedBox(height: 20),
-
-              // Skills Breakdown
-              const Align(
-                alignment: Alignment.centerLeft,
-                child: Text('Skills Breakdown',
-                    style: TextStyle(
-                        color: Colors.white,
-                        fontSize: 16,
-                        fontWeight: FontWeight.bold,
-                        fontFamily: 'Poppins')),
-              ),
-              const SizedBox(height: 12),
-              ...widget.answers.entries.map((e) => Padding(
-                    padding: const EdgeInsets.only(bottom: 10),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [
-                            Text(e.key.toUpperCase(),
-                                style: const TextStyle(
-                                    color: AppTheme.textSecondary,
-                                    fontSize: 11,
-                                    fontFamily: 'Poppins')),
-                            Text('${((e.value / 3) * 100).toInt()}%',
-                                style: TextStyle(
-                                    color: color,
-                                    fontSize: 11,
-                                    fontWeight: FontWeight.bold,
-                                    fontFamily: 'Poppins')),
-                          ],
-                        ),
-                        const SizedBox(height: 5),
-                        ClipRRect(
-                          borderRadius: BorderRadius.circular(10),
-                          child: LinearProgressIndicator(
-                            value: e.value / 3,
-                            backgroundColor: AppTheme.surface,
-                            valueColor: AlwaysStoppedAnimation<Color>(color),
-                            minHeight: 7,
-                          ),
-                        ),
-                      ],
-                    ),
-                  )),
               const SizedBox(height: 24),
 
-              // View Roadmap Button
+              // Skills Breakdown
+              Container(
+                width: double.infinity,
+                padding: const EdgeInsets.all(20),
+                decoration: BoxDecoration(
+                  color: AppTheme.surface,
+                  borderRadius: BorderRadius.circular(20),
+                  border: Border.all(color: AppTheme.border),
+                  boxShadow: [
+                    BoxShadow(
+                        color: Colors.black.withOpacity(0.04),
+                        blurRadius: 10,
+                        offset: const Offset(0, 2))
+                  ],
+                ),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    const Text('Skills Breakdown',
+                        style: TextStyle(
+                            color: AppTheme.textPrimary,
+                            fontSize: 16,
+                            fontWeight: FontWeight.bold,
+                            fontFamily: 'Poppins')),
+                    const SizedBox(height: 16),
+                    ...widget.answers.entries.map((e) => Padding(
+                          padding: const EdgeInsets.only(bottom: 12),
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Row(
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceBetween,
+                                children: [
+                                  Text(e.key.toUpperCase(),
+                                      style: const TextStyle(
+                                          color: AppTheme.textSecondary,
+                                          fontSize: 11,
+                                          fontFamily: 'Poppins',
+                                          fontWeight: FontWeight.w600)),
+                                  Text('${((e.value / 3) * 100).toInt()}%',
+                                      style: TextStyle(
+                                          color: color,
+                                          fontSize: 12,
+                                          fontWeight: FontWeight.bold,
+                                          fontFamily: 'Poppins')),
+                                ],
+                              ),
+                              const SizedBox(height: 6),
+                              ClipRRect(
+                                borderRadius: BorderRadius.circular(10),
+                                child: LinearProgressIndicator(
+                                  value: e.value / 3,
+                                  backgroundColor: AppTheme.background,
+                                  valueColor:
+                                      AlwaysStoppedAnimation<Color>(color),
+                                  minHeight: 8,
+                                ),
+                              ),
+                            ],
+                          ),
+                        )),
+                  ],
+                ),
+              ),
+              const SizedBox(height: 16),
+
+              // View Roadmap
               SizedBox(
                 width: double.infinity,
-                child: ElevatedButton(
+                child: ElevatedButton.icon(
                   style: ElevatedButton.styleFrom(
                     backgroundColor: color,
-                    padding: const EdgeInsets.symmetric(vertical: 15),
+                    padding: const EdgeInsets.symmetric(vertical: 16),
                     shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(14)),
+                        borderRadius: BorderRadius.circular(16)),
                   ),
                   onPressed: () => Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                        builder: (_) => RoadmapScreen(careerTrack: track)),
-                  ),
-                  child: const Text('View My Roadmap 🗺️',
+                      context,
+                      MaterialPageRoute(
+                          builder: (_) => RoadmapScreen(careerTrack: track))),
+                  icon: const Icon(Icons.map_rounded),
+                  label: const Text('View My Roadmap',
                       style: TextStyle(
                           fontSize: 15,
                           fontWeight: FontWeight.bold,
                           fontFamily: 'Poppins')),
                 ),
               ),
-              const SizedBox(height: 12),
+              const SizedBox(height: 10),
               SizedBox(
                 width: double.infinity,
                 child: OutlinedButton(
                   style: OutlinedButton.styleFrom(
-                    foregroundColor: Colors.white,
-                    side: const BorderSide(color: AppTheme.primary),
-                    padding: const EdgeInsets.symmetric(vertical: 13),
+                    foregroundColor: AppTheme.textSecondary,
+                    side: const BorderSide(color: AppTheme.border),
+                    padding: const EdgeInsets.symmetric(vertical: 14),
                     shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(12)),
+                        borderRadius: BorderRadius.circular(14)),
                   ),
                   onPressed: () => Navigator.pop(context),
                   child: const Text('Retake Quiz',
@@ -403,6 +375,65 @@ class _ResultScreenState extends State<ResultScreen> {
           ),
         ),
       ),
+    );
+  }
+}
+
+class _ActionButton extends StatelessWidget {
+  final String label;
+  final IconData icon;
+  final Color color;
+  final VoidCallback onTap;
+  final bool isOutlined;
+  final bool isLoading;
+
+  const _ActionButton({
+    required this.label,
+    required this.icon,
+    required this.color,
+    required this.onTap,
+    this.isOutlined = false,
+    this.isLoading = false,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return SizedBox(
+      width: double.infinity,
+      child: isOutlined
+          ? OutlinedButton.icon(
+              style: OutlinedButton.styleFrom(
+                foregroundColor: color,
+                side: BorderSide(color: color),
+                padding: const EdgeInsets.symmetric(vertical: 14),
+                shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(14)),
+              ),
+              onPressed: isLoading ? null : onTap,
+              icon: isLoading
+                  ? SizedBox(
+                      width: 16,
+                      height: 16,
+                      child: CircularProgressIndicator(
+                          strokeWidth: 2, color: color))
+                  : Icon(icon),
+              label: Text(label,
+                  style: const TextStyle(
+                      fontFamily: 'Poppins', fontWeight: FontWeight.w600)),
+            )
+          : ElevatedButton.icon(
+              style: ElevatedButton.styleFrom(
+                backgroundColor: color,
+                padding: const EdgeInsets.symmetric(vertical: 14),
+                shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(14)),
+              ),
+              onPressed: onTap,
+              icon: Icon(icon),
+              label: Text(label,
+                  style: const TextStyle(
+                      fontFamily: 'Poppins', fontWeight: FontWeight.bold)),
+            ),
     );
   }
 }

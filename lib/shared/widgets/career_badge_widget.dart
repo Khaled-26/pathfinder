@@ -1,15 +1,13 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 
-/// CareerBadgeWidget - Custom Widget by PathFinder Team
-/// Ain Shams University - Software Engineering
 class CareerBadgeWidget extends StatefulWidget {
   final String title;
   final IconData icon;
   final Color color;
   final bool isSelected;
   final VoidCallback? onTap;
-  final double? progress;
-  final bool showProgress;
+  final String? imagePath;
 
   const CareerBadgeWidget({
     super.key,
@@ -18,8 +16,7 @@ class CareerBadgeWidget extends StatefulWidget {
     required this.color,
     this.isSelected = false,
     this.onTap,
-    this.progress,
-    this.showProgress = false,
+    this.imagePath,
   });
 
   @override
@@ -62,69 +59,59 @@ class _CareerBadgeWidgetState extends State<CareerBadgeWidget>
         animation: _scaleAnimation,
         builder: (context, child) => Transform.scale(
           scale: _scaleAnimation.value,
-          child: AnimatedContainer(
-            duration: const Duration(milliseconds: 250),
-            padding: const EdgeInsets.all(14),
+          child: Container(
             decoration: BoxDecoration(
-              color: widget.isSelected
-                  ? widget.color.withOpacity(0.15)
-                  : const Color(0xFF1E1E2E),
-              borderRadius: BorderRadius.circular(18),
+              color: Colors.white,
+              borderRadius: BorderRadius.circular(20),
               border: Border.all(
-                color: widget.isSelected
-                    ? widget.color
-                    : widget.color.withOpacity(0.3),
-                width: widget.isSelected ? 2 : 1,
+                color: widget.color.withOpacity(0.2),
+                width: 1.5,
               ),
-              boxShadow: widget.isSelected
-                  ? [
-                      BoxShadow(
-                        color: widget.color.withOpacity(0.25),
-                        blurRadius: 16,
-                        spreadRadius: 1,
-                      )
-                    ]
-                  : [],
+              boxShadow: [
+                BoxShadow(
+                  color: widget.color.withOpacity(0.1),
+                  blurRadius: 12,
+                  offset: const Offset(0, 4),
+                )
+              ],
             ),
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Container(
-                  width: 46,
-                  height: 46,
-                  decoration: BoxDecoration(
-                    color: widget.color.withOpacity(0.15),
-                    shape: BoxShape.circle,
-                  ),
-                  child: Icon(widget.icon, color: widget.color, size: 24),
-                ),
-                const SizedBox(height: 8),
-                Text(
-                  widget.title,
-                  style: TextStyle(
-                    color: widget.isSelected ? Colors.white : Colors.white70,
-                    fontWeight:
-                        widget.isSelected ? FontWeight.bold : FontWeight.w500,
-                    fontSize: 11,
-                    fontFamily: 'Poppins',
-                  ),
-                  textAlign: TextAlign.center,
-                  maxLines: 2,
-                  overflow: TextOverflow.ellipsis,
-                ),
-                if (widget.showProgress && widget.progress != null) ...[
-                  const SizedBox(height: 6),
-                  ClipRRect(
-                    borderRadius: BorderRadius.circular(10),
-                    child: LinearProgressIndicator(
-                      value: widget.progress!,
-                      backgroundColor: widget.color.withOpacity(0.2),
-                      valueColor: AlwaysStoppedAnimation<Color>(widget.color),
-                      minHeight: 4,
+            child: Padding(
+              padding: const EdgeInsets.all(14),
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  // Image or Icon
+                  if (widget.imagePath != null)
+                    SvgPicture.asset(
+                      widget.imagePath!,
+                      height: 60,
+                      width: 60,
+                    )
+                  else
+                    Container(
+                      width: 56,
+                      height: 56,
+                      decoration: BoxDecoration(
+                        color: widget.color.withOpacity(0.1),
+                        shape: BoxShape.circle,
+                      ),
+                      child: Icon(widget.icon, color: widget.color, size: 28),
                     ),
+                  const SizedBox(height: 8),
+                  Text(
+                    widget.title,
+                    style: TextStyle(
+                      color: widget.color,
+                      fontWeight: FontWeight.bold,
+                      fontSize: 11,
+                      fontFamily: 'Poppins',
+                    ),
+                    textAlign: TextAlign.center,
+                    maxLines: 2,
+                    overflow: TextOverflow.ellipsis,
                   ),
                 ],
-              ],
+              ),
             ),
           ),
         ),

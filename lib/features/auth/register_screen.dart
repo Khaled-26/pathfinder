@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 import 'package:pathfinder/core/theme/app_theme.dart';
 import 'package:pathfinder/features/home/home_screen.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -37,20 +38,16 @@ class _RegisterScreenState extends State<RegisterScreen> {
         _universityController.text.isEmpty ||
         _programController.text.isEmpty) {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Please fill all fields')),
-      );
+          const SnackBar(content: Text('Please fill all fields')));
       return;
     }
-
     setState(() => _isLoading = true);
-
     try {
       final credential =
           await FirebaseAuth.instance.createUserWithEmailAndPassword(
         email: _emailController.text.trim(),
         password: _passwordController.text.trim(),
       );
-
       await credential.user?.updateDisplayName(_nameController.text.trim());
       await credential.user?.reload();
       await credential.user?.sendEmailVerification();
@@ -64,45 +61,23 @@ class _RegisterScreenState extends State<RegisterScreen> {
       await prefs.setBool('is_logged_in', true);
 
       setState(() => _isLoading = false);
-
       if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-            content: Row(
-              children: [
-                Icon(Icons.mark_email_read, color: Colors.white),
-                SizedBox(width: 8),
-                Expanded(
-                  child: Text(
-                    '✅ Verification email sent! Please check your inbox.',
-                    style: TextStyle(fontFamily: 'Poppins'),
-                  ),
-                ),
-              ],
-            ),
-            backgroundColor: Colors.green,
-            duration: Duration(seconds: 3),
-            behavior: SnackBarBehavior.floating,
-          ),
-        );
+        ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+            content: Text('✅ Verification email sent!'),
+            backgroundColor: Colors.green));
         await Future.delayed(const Duration(seconds: 2));
         Navigator.pushReplacement(
-          context,
-          MaterialPageRoute(builder: (_) => const HomeScreen()),
-        );
+            context, MaterialPageRoute(builder: (_) => const HomeScreen()));
       }
     } on FirebaseAuthException catch (e) {
       String message = 'Registration failed';
       if (e.code == 'weak-password')
-        message = 'Password is too weak (min 6 characters)';
+        message = 'Password too weak (min 6 chars)';
       if (e.code == 'email-already-in-use')
         message = 'Email already registered';
-      if (e.code == 'invalid-email') message = 'Invalid email address';
-
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text(message), backgroundColor: Colors.red),
-        );
+            SnackBar(content: Text(message), backgroundColor: Colors.red));
       }
     } finally {
       setState(() => _isLoading = false);
@@ -112,113 +87,98 @@ class _RegisterScreenState extends State<RegisterScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: AppTheme.background,
       body: SafeArea(
         child: SingleChildScrollView(
           padding: const EdgeInsets.all(24),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              const SizedBox(height: 24),
+              const SizedBox(height: 16),
               Center(
                 child: Column(
                   children: [
-                    Container(
-                      width: 70,
-                      height: 70,
-                      decoration: BoxDecoration(
-                        color: AppTheme.primary,
-                        borderRadius: BorderRadius.circular(18),
-                      ),
-                      child: const Icon(Icons.explore,
-                          color: Colors.white, size: 38),
+                    SvgPicture.asset(
+                      'assets/images/career1.svg',
+                      height: 100,
                     ),
                     const SizedBox(height: 12),
-                    const Text(
-                      'PathFinder',
-                      style: TextStyle(
-                        fontSize: 28,
-                        fontWeight: FontWeight.bold,
-                        color: Colors.white,
-                        fontFamily: 'Poppins',
-                      ),
-                    ),
+                    const Text('PathFinder',
+                        style: TextStyle(
+                            fontSize: 26,
+                            fontWeight: FontWeight.bold,
+                            color: AppTheme.primary,
+                            fontFamily: 'Poppins')),
                   ],
                 ),
               ),
-              const SizedBox(height: 28),
-              const Text(
-                'Create Account',
-                style: TextStyle(
-                  fontSize: 24,
-                  fontWeight: FontWeight.bold,
-                  color: Colors.white,
-                  fontFamily: 'Poppins',
-                ),
-              ),
-              const SizedBox(height: 6),
-              const Text(
-                'Start your career journey',
-                style: TextStyle(
-                    color: AppTheme.textSecondary, fontFamily: 'Poppins'),
-              ),
               const SizedBox(height: 24),
-              // Full Name
+              const Text('Create Account',
+                  style: TextStyle(
+                      fontSize: 24,
+                      fontWeight: FontWeight.bold,
+                      color: AppTheme.textPrimary,
+                      fontFamily: 'Poppins')),
+              const SizedBox(height: 6),
+              const Text('Start your career journey today',
+                  style: TextStyle(
+                      color: AppTheme.textSecondary, fontFamily: 'Poppins')),
+              const SizedBox(height: 24),
               _buildTextField(
-                controller: _nameController,
-                label: 'Full Name',
-                icon: Icons.person_outline,
-              ),
+                  controller: _nameController,
+                  label: 'Full Name',
+                  icon: Icons.person_outline),
               const SizedBox(height: 14),
-              // Email
               _buildTextField(
-                controller: _emailController,
-                label: 'Email',
-                icon: Icons.email_outlined,
-                keyboardType: TextInputType.emailAddress,
-              ),
+                  controller: _emailController,
+                  label: 'Email Address',
+                  icon: Icons.email_outlined,
+                  keyboardType: TextInputType.emailAddress),
               const SizedBox(height: 14),
-              // Password
               TextField(
                 controller: _passwordController,
                 obscureText: _obscurePassword,
-                style: const TextStyle(color: Colors.white),
+                style: const TextStyle(
+                    color: AppTheme.textPrimary, fontFamily: 'Poppins'),
                 decoration: InputDecoration(
                   labelText: 'Password',
-                  labelStyle: const TextStyle(color: AppTheme.textSecondary),
+                  labelStyle: const TextStyle(
+                      color: AppTheme.textSecondary, fontFamily: 'Poppins'),
                   prefixIcon:
                       const Icon(Icons.lock_outlined, color: AppTheme.primary),
                   suffixIcon: IconButton(
                     icon: Icon(
-                      _obscurePassword
-                          ? Icons.visibility_off
-                          : Icons.visibility,
-                      color: AppTheme.textSecondary,
-                    ),
+                        _obscurePassword
+                            ? Icons.visibility_off
+                            : Icons.visibility,
+                        color: AppTheme.textSecondary),
                     onPressed: () =>
                         setState(() => _obscurePassword = !_obscurePassword),
                   ),
                   filled: true,
                   fillColor: AppTheme.surface,
                   border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(12),
-                    borderSide: BorderSide.none,
-                  ),
+                      borderRadius: BorderRadius.circular(14),
+                      borderSide: const BorderSide(color: AppTheme.border)),
+                  enabledBorder: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(14),
+                      borderSide: const BorderSide(color: AppTheme.border)),
+                  focusedBorder: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(14),
+                      borderSide:
+                          const BorderSide(color: AppTheme.primary, width: 2)),
                 ),
               ),
               const SizedBox(height: 14),
-              // University
               _buildTextField(
-                controller: _universityController,
-                label: 'University',
-                icon: Icons.school_outlined,
-              ),
+                  controller: _universityController,
+                  label: 'University',
+                  icon: Icons.school_outlined),
               const SizedBox(height: 14),
-              // Program
               _buildTextField(
-                controller: _programController,
-                label: 'Program / Major',
-                icon: Icons.code_outlined,
-              ),
+                  controller: _programController,
+                  label: 'Program / Major',
+                  icon: Icons.menu_book_outlined),
               const SizedBox(height: 28),
               SizedBox(
                 width: double.infinity,
@@ -226,35 +186,28 @@ class _RegisterScreenState extends State<RegisterScreen> {
                   onPressed: _isLoading ? null : _register,
                   child: _isLoading
                       ? const CircularProgressIndicator(color: Colors.white)
-                      : const Text(
-                          'Register',
+                      : const Text('Create Account',
                           style: TextStyle(
-                            fontSize: 16,
-                            fontFamily: 'Poppins',
-                            fontWeight: FontWeight.bold,
-                          ),
-                        ),
+                              fontSize: 16,
+                              fontFamily: 'Poppins',
+                              fontWeight: FontWeight.bold)),
                 ),
               ),
               const SizedBox(height: 20),
               Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  const Text(
-                    'Already have an account? ',
-                    style: TextStyle(
-                        color: AppTheme.textSecondary, fontFamily: 'Poppins'),
-                  ),
+                  const Text('Already have an account? ',
+                      style: TextStyle(
+                          color: AppTheme.textSecondary,
+                          fontFamily: 'Poppins')),
                   GestureDetector(
                     onTap: () => Navigator.pop(context),
-                    child: const Text(
-                      'Login',
-                      style: TextStyle(
-                        color: AppTheme.primary,
-                        fontWeight: FontWeight.bold,
-                        fontFamily: 'Poppins',
-                      ),
-                    ),
+                    child: const Text('Login',
+                        style: TextStyle(
+                            color: AppTheme.primary,
+                            fontWeight: FontWeight.bold,
+                            fontFamily: 'Poppins')),
                   ),
                 ],
               ),
@@ -274,17 +227,24 @@ class _RegisterScreenState extends State<RegisterScreen> {
     return TextField(
       controller: controller,
       keyboardType: keyboardType,
-      style: const TextStyle(color: Colors.white),
+      style:
+          const TextStyle(color: AppTheme.textPrimary, fontFamily: 'Poppins'),
       decoration: InputDecoration(
         labelText: label,
-        labelStyle: const TextStyle(color: AppTheme.textSecondary),
+        labelStyle: const TextStyle(
+            color: AppTheme.textSecondary, fontFamily: 'Poppins'),
         prefixIcon: Icon(icon, color: AppTheme.primary),
         filled: true,
         fillColor: AppTheme.surface,
         border: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(12),
-          borderSide: BorderSide.none,
-        ),
+            borderRadius: BorderRadius.circular(14),
+            borderSide: const BorderSide(color: AppTheme.border)),
+        enabledBorder: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(14),
+            borderSide: const BorderSide(color: AppTheme.border)),
+        focusedBorder: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(14),
+            borderSide: const BorderSide(color: AppTheme.primary, width: 2)),
       ),
     );
   }

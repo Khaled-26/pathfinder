@@ -29,45 +29,33 @@ class _LoginScreenState extends State<LoginScreen> {
   void _login() async {
     if (_emailController.text.isEmpty || _passwordController.text.isEmpty) {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Please fill all fields')),
-      );
+          const SnackBar(content: Text('Please fill all fields')));
       return;
     }
-
     setState(() => _isLoading = true);
-
     try {
       await FirebaseAuth.instance.signInWithEmailAndPassword(
         email: _emailController.text.trim(),
         password: _passwordController.text.trim(),
       );
-
       final user = FirebaseAuth.instance.currentUser;
       final prefs = await SharedPreferences.getInstance();
       await prefs.setString('user_email', _emailController.text.trim());
-      await prefs.setString(
-        'user_name',
-        user?.displayName ?? _emailController.text.split('@')[0],
-      );
+      await prefs.setString('user_name',
+          user?.displayName ?? _emailController.text.split('@')[0]);
       await prefs.setBool('is_logged_in', true);
-
       if (mounted) {
         Navigator.pushReplacement(
-          context,
-          MaterialPageRoute(builder: (_) => const HomeScreen()),
-        );
+            context, MaterialPageRoute(builder: (_) => const HomeScreen()));
       }
     } on FirebaseAuthException catch (e) {
       String message = 'Login failed';
       if (e.code == 'user-not-found') message = 'No user found with this email';
       if (e.code == 'wrong-password') message = 'Wrong password';
-      if (e.code == 'invalid-email') message = 'Invalid email address';
       if (e.code == 'invalid-credential') message = 'Invalid email or password';
-
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text(message), backgroundColor: Colors.red),
-        );
+            SnackBar(content: Text(message), backgroundColor: Colors.red));
       }
     } finally {
       setState(() => _isLoading = false);
@@ -76,50 +64,26 @@ class _LoginScreenState extends State<LoginScreen> {
 
   void _forgotPassword() async {
     if (_emailController.text.isEmpty) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
+      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
           content: Text('Please enter your email first'),
-          backgroundColor: Colors.orange,
-        ),
-      );
+          backgroundColor: Colors.orange));
       return;
     }
-
     try {
-      await FirebaseAuth.instance.sendPasswordResetEmail(
-        email: _emailController.text.trim(),
-      );
+      await FirebaseAuth.instance
+          .sendPasswordResetEmail(email: _emailController.text.trim());
       if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Row(
-              children: [
-                const Icon(Icons.mark_email_read, color: Colors.white),
-                const SizedBox(width: 8),
-                Expanded(
-                  child: Text(
-                    'Password reset email sent to ${_emailController.text.trim()}',
-                    style: const TextStyle(fontFamily: 'Poppins'),
-                  ),
-                ),
-              ],
-            ),
-            backgroundColor: Colors.green,
-            behavior: SnackBarBehavior.floating,
-            shape:
-                RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-          ),
-        );
+        ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+          content: Text(
+              'Password reset email sent to ${_emailController.text.trim()}'),
+          backgroundColor: Colors.green,
+          behavior: SnackBarBehavior.floating,
+        ));
       }
     } on FirebaseAuthException catch (e) {
-      String message = 'Failed to send reset email';
-      if (e.code == 'user-not-found') message = 'No user found with this email';
-      if (e.code == 'invalid-email') message = 'Invalid email address';
-
       if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text(message), backgroundColor: Colors.red),
-        );
+        ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+            content: Text(e.message ?? 'Error'), backgroundColor: Colors.red));
       }
     }
   }
@@ -127,169 +91,181 @@ class _LoginScreenState extends State<LoginScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: AppTheme.background,
       body: SafeArea(
         child: SingleChildScrollView(
           padding: const EdgeInsets.all(24),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              const SizedBox(height: 30),
+              const SizedBox(height: 20),
               Center(
                 child: Column(
                   children: [
                     SvgPicture.asset(
                       'assets/images/career1.svg',
-                      height: 140,
+                      height: 130,
                     ),
                     const SizedBox(height: 16),
-                    const Text(
-                      'PathFinder',
-                      style: TextStyle(
-                        fontSize: 32,
-                        fontWeight: FontWeight.bold,
-                        color: Colors.white,
-                        fontFamily: 'Poppins',
-                      ),
-                    ),
-                    const Text(
-                      'Your Career, Your Path',
-                      style: TextStyle(
-                        fontSize: 14,
-                        color: AppTheme.textSecondary,
-                        fontFamily: 'Poppins',
-                      ),
-                    ),
+                    const Text('PathFinder',
+                        style: TextStyle(
+                            fontSize: 32,
+                            fontWeight: FontWeight.bold,
+                            color: AppTheme.primary,
+                            fontFamily: 'Poppins')),
+                    const Text('Your Career, Your Path',
+                        style: TextStyle(
+                            fontSize: 14,
+                            color: AppTheme.textSecondary,
+                            fontFamily: 'Poppins')),
                   ],
                 ),
               ),
-              const SizedBox(height: 40),
-              const Text(
-                'Welcome Back!',
-                style: TextStyle(
-                  fontSize: 24,
-                  fontWeight: FontWeight.bold,
-                  color: Colors.white,
-                  fontFamily: 'Poppins',
-                ),
-              ),
+              const SizedBox(height: 36),
+              const Text('Welcome Back! 👋',
+                  style: TextStyle(
+                      fontSize: 26,
+                      fontWeight: FontWeight.bold,
+                      color: AppTheme.textPrimary,
+                      fontFamily: 'Poppins')),
               const SizedBox(height: 6),
-              const Text(
-                'Sign in to continue',
-                style: TextStyle(
-                  color: AppTheme.textSecondary,
-                  fontFamily: 'Poppins',
-                ),
-              ),
-              const SizedBox(height: 28),
-              TextField(
-                controller: _emailController,
-                keyboardType: TextInputType.emailAddress,
-                style: const TextStyle(color: Colors.white),
-                decoration: InputDecoration(
-                  labelText: 'Email',
-                  labelStyle: const TextStyle(color: AppTheme.textSecondary),
-                  prefixIcon:
-                      const Icon(Icons.email_outlined, color: AppTheme.primary),
-                  filled: true,
-                  fillColor: AppTheme.surface,
-                  border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(12),
-                    borderSide: BorderSide.none,
-                  ),
-                ),
-              ),
+              const Text('Sign in to continue your journey',
+                  style: TextStyle(
+                      color: AppTheme.textSecondary, fontFamily: 'Poppins')),
+              const SizedBox(height: 32),
+              _buildTextField(
+                  controller: _emailController,
+                  label: 'Email Address',
+                  icon: Icons.email_outlined,
+                  keyboardType: TextInputType.emailAddress),
               const SizedBox(height: 16),
               TextField(
                 controller: _passwordController,
                 obscureText: _obscurePassword,
-                style: const TextStyle(color: Colors.white),
+                style: const TextStyle(
+                    color: AppTheme.textPrimary, fontFamily: 'Poppins'),
                 decoration: InputDecoration(
                   labelText: 'Password',
-                  labelStyle: const TextStyle(color: AppTheme.textSecondary),
+                  labelStyle: const TextStyle(
+                      color: AppTheme.textSecondary, fontFamily: 'Poppins'),
                   prefixIcon:
                       const Icon(Icons.lock_outlined, color: AppTheme.primary),
                   suffixIcon: IconButton(
                     icon: Icon(
-                      _obscurePassword
-                          ? Icons.visibility_off
-                          : Icons.visibility,
-                      color: AppTheme.textSecondary,
-                    ),
+                        _obscurePassword
+                            ? Icons.visibility_off
+                            : Icons.visibility,
+                        color: AppTheme.textSecondary),
                     onPressed: () =>
                         setState(() => _obscurePassword = !_obscurePassword),
                   ),
                   filled: true,
                   fillColor: AppTheme.surface,
                   border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(12),
-                    borderSide: BorderSide.none,
-                  ),
+                      borderRadius: BorderRadius.circular(14),
+                      borderSide: const BorderSide(color: AppTheme.border)),
+                  enabledBorder: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(14),
+                      borderSide: const BorderSide(color: AppTheme.border)),
+                  focusedBorder: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(14),
+                      borderSide:
+                          const BorderSide(color: AppTheme.primary, width: 2)),
                 ),
               ),
-              const SizedBox(height: 8),
-              // Forgot Password
+              const SizedBox(height: 10),
               Align(
                 alignment: Alignment.centerRight,
                 child: GestureDetector(
                   onTap: _forgotPassword,
-                  child: const Text(
-                    'Forgot Password?',
-                    style: TextStyle(
-                      color: AppTheme.primary,
-                      fontFamily: 'Poppins',
-                      fontWeight: FontWeight.w600,
-                      fontSize: 13,
-                    ),
-                  ),
+                  child: const Text('Forgot Password?',
+                      style: TextStyle(
+                          color: AppTheme.primary,
+                          fontFamily: 'Poppins',
+                          fontWeight: FontWeight.w600,
+                          fontSize: 13)),
                 ),
               ),
-              const SizedBox(height: 20),
+              const SizedBox(height: 24),
               SizedBox(
                 width: double.infinity,
                 child: ElevatedButton(
                   onPressed: _isLoading ? null : _login,
                   child: _isLoading
                       ? const CircularProgressIndicator(color: Colors.white)
-                      : const Text(
-                          'Login',
+                      : const Text('Login',
                           style: TextStyle(
-                            fontSize: 16,
-                            fontFamily: 'Poppins',
-                            fontWeight: FontWeight.bold,
-                          ),
-                        ),
+                              fontSize: 16,
+                              fontFamily: 'Poppins',
+                              fontWeight: FontWeight.bold)),
                 ),
               ),
-              const SizedBox(height: 20),
+              const SizedBox(height: 24),
+              Row(children: [
+                const Expanded(child: Divider(color: AppTheme.border)),
+                const Padding(
+                    padding: EdgeInsets.symmetric(horizontal: 12),
+                    child: Text('or',
+                        style: TextStyle(
+                            color: AppTheme.textSecondary,
+                            fontFamily: 'Poppins'))),
+                const Expanded(child: Divider(color: AppTheme.border)),
+              ]),
+              const SizedBox(height: 24),
               Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  const Text(
-                    "Don't have an account? ",
-                    style: TextStyle(
-                      color: AppTheme.textSecondary,
-                      fontFamily: 'Poppins',
-                    ),
-                  ),
+                  const Text("Don't have an account? ",
+                      style: TextStyle(
+                          color: AppTheme.textSecondary,
+                          fontFamily: 'Poppins')),
                   GestureDetector(
                     onTap: () => Navigator.push(
-                      context,
-                      MaterialPageRoute(builder: (_) => const RegisterScreen()),
-                    ),
-                    child: const Text(
-                      'Register',
-                      style: TextStyle(
-                        color: AppTheme.primary,
-                        fontWeight: FontWeight.bold,
-                        fontFamily: 'Poppins',
-                      ),
-                    ),
+                        context,
+                        MaterialPageRoute(
+                            builder: (_) => const RegisterScreen())),
+                    child: const Text('Register',
+                        style: TextStyle(
+                            color: AppTheme.primary,
+                            fontWeight: FontWeight.bold,
+                            fontFamily: 'Poppins')),
                   ),
                 ],
               ),
             ],
           ),
         ),
+      ),
+    );
+  }
+
+  Widget _buildTextField({
+    required TextEditingController controller,
+    required String label,
+    required IconData icon,
+    TextInputType keyboardType = TextInputType.text,
+  }) {
+    return TextField(
+      controller: controller,
+      keyboardType: keyboardType,
+      style:
+          const TextStyle(color: AppTheme.textPrimary, fontFamily: 'Poppins'),
+      decoration: InputDecoration(
+        labelText: label,
+        labelStyle: const TextStyle(
+            color: AppTheme.textSecondary, fontFamily: 'Poppins'),
+        prefixIcon: Icon(icon, color: AppTheme.primary),
+        filled: true,
+        fillColor: AppTheme.surface,
+        border: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(14),
+            borderSide: const BorderSide(color: AppTheme.border)),
+        enabledBorder: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(14),
+            borderSide: const BorderSide(color: AppTheme.border)),
+        focusedBorder: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(14),
+            borderSide: const BorderSide(color: AppTheme.primary, width: 2)),
       ),
     );
   }

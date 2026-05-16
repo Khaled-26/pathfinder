@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:pathfinder/core/theme/app_theme.dart';
 
 class NotificationService {
   static Future<void> init() async {}
@@ -12,39 +13,43 @@ class NotificationService {
       SnackBar(
         content: Row(
           children: [
-            const Icon(Icons.notifications, color: Colors.white),
-            const SizedBox(width: 8),
+            Container(
+              width: 36,
+              height: 36,
+              decoration: BoxDecoration(
+                color: Colors.white.withOpacity(0.2),
+                shape: BoxShape.circle,
+              ),
+              child: const Icon(Icons.notifications_rounded,
+                  color: Colors.white, size: 20),
+            ),
+            const SizedBox(width: 10),
             Expanded(
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 mainAxisSize: MainAxisSize.min,
                 children: [
-                  Text(
-                    title,
-                    style: const TextStyle(
-                      fontWeight: FontWeight.bold,
-                      color: Colors.white,
-                      fontFamily: 'Poppins',
-                    ),
-                  ),
-                  Text(
-                    body,
-                    style: const TextStyle(
-                      color: Colors.white70,
-                      fontFamily: 'Poppins',
-                    ),
-                  ),
+                  Text(title,
+                      style: const TextStyle(
+                          fontWeight: FontWeight.bold,
+                          color: Colors.white,
+                          fontFamily: 'Poppins',
+                          fontSize: 13)),
+                  Text(body,
+                      style: const TextStyle(
+                          color: Colors.white70,
+                          fontFamily: 'Poppins',
+                          fontSize: 11)),
                 ],
               ),
             ),
           ],
         ),
-        backgroundColor: const Color(0xFF6C63FF),
+        backgroundColor: AppTheme.primary,
         duration: const Duration(seconds: 3),
         behavior: SnackBarBehavior.floating,
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(12),
-        ),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+        margin: const EdgeInsets.all(16),
       ),
     );
   }

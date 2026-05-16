@@ -29,39 +29,56 @@ class _HomeScreenState extends State<HomeScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: AppTheme.background,
       body: _screens[_currentIndex],
-      bottomNavigationBar: NavigationBar(
-        selectedIndex: _currentIndex,
-        onDestinationSelected: (index) => setState(() => _currentIndex = index),
-        backgroundColor: AppTheme.surface,
-        indicatorColor: AppTheme.primary.withOpacity(0.2),
-        destinations: const [
-          NavigationDestination(
-            icon: Icon(Icons.home_outlined),
-            selectedIcon: Icon(Icons.home, color: AppTheme.primary),
-            label: 'Home',
-          ),
-          NavigationDestination(
-            icon: Icon(Icons.quiz_outlined),
-            selectedIcon: Icon(Icons.quiz, color: AppTheme.primary),
-            label: 'Quiz',
-          ),
-          NavigationDestination(
-            icon: Icon(Icons.chat_bubble_outline),
-            selectedIcon: Icon(Icons.chat_bubble, color: AppTheme.primary),
-            label: 'AI Chat',
-          ),
-          NavigationDestination(
-            icon: Icon(Icons.map_outlined),
-            selectedIcon: Icon(Icons.map, color: AppTheme.primary),
-            label: 'Roadmap',
-          ),
-          NavigationDestination(
-            icon: Icon(Icons.person_outline),
-            selectedIcon: Icon(Icons.person, color: AppTheme.primary),
-            label: 'Profile',
-          ),
-        ],
+      bottomNavigationBar: Container(
+        decoration: BoxDecoration(
+          color: AppTheme.surface,
+          boxShadow: [
+            BoxShadow(
+              color: AppTheme.primary.withOpacity(0.08),
+              blurRadius: 20,
+              offset: const Offset(0, -4),
+            )
+          ],
+        ),
+        child: NavigationBar(
+          selectedIndex: _currentIndex,
+          onDestinationSelected: (index) =>
+              setState(() => _currentIndex = index),
+          backgroundColor: AppTheme.surface,
+          indicatorColor: AppTheme.primary.withOpacity(0.1),
+          labelBehavior: NavigationDestinationLabelBehavior.alwaysShow,
+          destinations: [
+            NavigationDestination(
+              icon: Icon(Icons.home_outlined, color: AppTheme.textSecondary),
+              selectedIcon: Icon(Icons.home_rounded, color: AppTheme.primary),
+              label: 'Home',
+            ),
+            NavigationDestination(
+              icon: Icon(Icons.quiz_outlined, color: AppTheme.textSecondary),
+              selectedIcon: Icon(Icons.quiz_rounded, color: AppTheme.primary),
+              label: 'Quiz',
+            ),
+            NavigationDestination(
+              icon: Icon(Icons.chat_bubble_outline,
+                  color: AppTheme.textSecondary),
+              selectedIcon:
+                  Icon(Icons.chat_bubble_rounded, color: AppTheme.primary),
+              label: 'AI Chat',
+            ),
+            NavigationDestination(
+              icon: Icon(Icons.map_outlined, color: AppTheme.textSecondary),
+              selectedIcon: Icon(Icons.map_rounded, color: AppTheme.primary),
+              label: 'Roadmap',
+            ),
+            NavigationDestination(
+              icon: Icon(Icons.person_outline, color: AppTheme.textSecondary),
+              selectedIcon: Icon(Icons.person_rounded, color: AppTheme.primary),
+              label: 'Profile',
+            ),
+          ],
+        ),
       ),
     );
   }
@@ -75,7 +92,7 @@ class _HomeTab extends StatefulWidget {
 }
 
 class _HomeTabState extends State<_HomeTab> {
-  String _userName = 'Khaled';
+  String _userName = 'Student';
   String? _savedTrack;
   bool _apiOnline = false;
 
@@ -102,7 +119,7 @@ class _HomeTabState extends State<_HomeTab> {
   Widget build(BuildContext context) {
     return SafeArea(
       child: SingleChildScrollView(
-        padding: const EdgeInsets.all(24),
+        padding: const EdgeInsets.all(20),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
@@ -124,8 +141,8 @@ class _HomeTabState extends State<_HomeTab> {
                     const Text(
                       'PathFinder',
                       style: TextStyle(
-                        color: Colors.white,
-                        fontSize: 26,
+                        color: AppTheme.primary,
+                        fontSize: 28,
                         fontWeight: FontWeight.bold,
                         fontFamily: 'Poppins',
                       ),
@@ -139,9 +156,14 @@ class _HomeTabState extends State<_HomeTab> {
                           horizontal: 10, vertical: 6),
                       decoration: BoxDecoration(
                         color: _apiOnline
-                            ? Colors.green.withOpacity(0.15)
-                            : Colors.red.withOpacity(0.15),
+                            ? Colors.green.withOpacity(0.1)
+                            : Colors.red.withOpacity(0.1),
                         borderRadius: BorderRadius.circular(20),
+                        border: Border.all(
+                          color: _apiOnline
+                              ? Colors.green.withOpacity(0.3)
+                              : Colors.red.withOpacity(0.3),
+                        ),
                       ),
                       child: Row(
                         children: [
@@ -162,13 +184,21 @@ class _HomeTabState extends State<_HomeTab> {
                     ),
                     const SizedBox(width: 8),
                     Container(
-                      width: 42,
-                      height: 42,
+                      width: 44,
+                      height: 44,
                       decoration: BoxDecoration(
                         color: AppTheme.primary,
-                        borderRadius: BorderRadius.circular(12),
+                        borderRadius: BorderRadius.circular(14),
+                        boxShadow: [
+                          BoxShadow(
+                            color: AppTheme.primary.withOpacity(0.3),
+                            blurRadius: 10,
+                            offset: const Offset(0, 4),
+                          )
+                        ],
                       ),
-                      child: const Icon(Icons.explore, color: Colors.white),
+                      child: const Icon(Icons.explore_rounded,
+                          color: Colors.white),
                     ),
                   ],
                 ),
@@ -176,54 +206,61 @@ class _HomeTabState extends State<_HomeTab> {
             ),
             const SizedBox(height: 20),
 
-            // Saved Track Banner
+            // Saved Track
             if (_savedTrack != null) ...[
               Container(
                 width: double.infinity,
-                padding: const EdgeInsets.all(14),
+                padding: const EdgeInsets.all(16),
                 decoration: BoxDecoration(
-                  color: Colors.green.withOpacity(0.1),
-                  borderRadius: BorderRadius.circular(14),
-                  border: Border.all(color: Colors.green.withOpacity(0.3)),
+                  color: Colors.green.withOpacity(0.08),
+                  borderRadius: BorderRadius.circular(16),
+                  border: Border.all(color: Colors.green.withOpacity(0.25)),
                 ),
                 child: Row(
                   children: [
-                    const Icon(Icons.check_circle,
-                        color: Colors.green, size: 20),
-                    const SizedBox(width: 10),
+                    Container(
+                      width: 40,
+                      height: 40,
+                      decoration: BoxDecoration(
+                        color: Colors.green.withOpacity(0.15),
+                        shape: BoxShape.circle,
+                      ),
+                      child: const Icon(Icons.check_circle,
+                          color: Colors.green, size: 22),
+                    ),
+                    const SizedBox(width: 12),
                     Expanded(
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          const Text(
-                            'Your Career Track',
-                            style: TextStyle(
-                              color: Colors.green,
-                              fontSize: 11,
-                              fontFamily: 'Poppins',
-                            ),
-                          ),
-                          Text(
-                            _savedTrack!,
-                            style: const TextStyle(
-                              color: Colors.white,
-                              fontWeight: FontWeight.bold,
-                              fontFamily: 'Poppins',
-                            ),
-                          ),
+                          const Text('Your Career Track',
+                              style: TextStyle(
+                                  color: Colors.green,
+                                  fontSize: 11,
+                                  fontFamily: 'Poppins')),
+                          Text(_savedTrack!,
+                              style: const TextStyle(
+                                  color: AppTheme.textPrimary,
+                                  fontWeight: FontWeight.bold,
+                                  fontFamily: 'Poppins')),
                         ],
                       ),
                     ),
                     GestureDetector(
                       onTap: () => Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (_) =>
-                              RoadmapScreen(careerTrack: _savedTrack),
+                          context,
+                          MaterialPageRoute(
+                              builder: (_) =>
+                                  RoadmapScreen(careerTrack: _savedTrack))),
+                      child: Container(
+                        padding: const EdgeInsets.all(8),
+                        decoration: BoxDecoration(
+                          color: Colors.green.withOpacity(0.1),
+                          borderRadius: BorderRadius.circular(8),
                         ),
+                        child: const Icon(Icons.arrow_forward_ios,
+                            color: Colors.green, size: 14),
                       ),
-                      child: const Icon(Icons.arrow_forward_ios,
-                          color: Colors.green, size: 14),
                     ),
                   ],
                 ),
@@ -234,89 +271,96 @@ class _HomeTabState extends State<_HomeTab> {
             // Banner Card
             Container(
               width: double.infinity,
-              padding: const EdgeInsets.all(22),
+              padding: const EdgeInsets.all(24),
               decoration: BoxDecoration(
-                gradient: const LinearGradient(
-                  colors: [AppTheme.primary, Color(0xFF9C63FF)],
+                gradient: LinearGradient(
+                  colors: [AppTheme.primary, AppTheme.secondary],
                   begin: Alignment.topLeft,
                   end: Alignment.bottomRight,
                 ),
-                borderRadius: BorderRadius.circular(22),
+                borderRadius: BorderRadius.circular(24),
                 boxShadow: [
                   BoxShadow(
                     color: AppTheme.primary.withOpacity(0.35),
                     blurRadius: 20,
                     offset: const Offset(0, 8),
-                  ),
+                  )
                 ],
               ),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
+                  Container(
+                    padding:
+                        const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+                    decoration: BoxDecoration(
+                      color: Colors.white.withOpacity(0.2),
+                      borderRadius: BorderRadius.circular(20),
+                    ),
+                    child: const Text('AI-Powered',
+                        style: TextStyle(
+                            color: Colors.white,
+                            fontSize: 11,
+                            fontFamily: 'Poppins',
+                            fontWeight: FontWeight.w600)),
+                  ),
+                  const SizedBox(height: 12),
                   const Text(
-                    '🧭 Find Your Career Path',
+                    'Find Your\nCareer Path 🧭',
                     style: TextStyle(
                       color: Colors.white,
-                      fontSize: 18,
+                      fontSize: 22,
                       fontWeight: FontWeight.bold,
                       fontFamily: 'Poppins',
+                      height: 1.3,
                     ),
                   ),
-                  const SizedBox(height: 6),
+                  const SizedBox(height: 8),
                   const Text(
-                    'Take the quiz and get your personalized AI-powered roadmap',
+                    'Take the quiz and get your personalized learning roadmap',
                     style: TextStyle(
-                      color: Colors.white70,
-                      fontSize: 12,
-                      fontFamily: 'Poppins',
-                    ),
+                        color: Colors.white70,
+                        fontSize: 12,
+                        fontFamily: 'Poppins'),
                   ),
-                  const SizedBox(height: 14),
+                  const SizedBox(height: 16),
                   ElevatedButton(
                     style: ElevatedButton.styleFrom(
                       backgroundColor: Colors.white,
                       foregroundColor: AppTheme.primary,
                       shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(10),
-                      ),
+                          borderRadius: BorderRadius.circular(12)),
                       padding: const EdgeInsets.symmetric(
                           horizontal: 20, vertical: 10),
                     ),
-                    onPressed: () => Navigator.push(
-                      context,
-                      MaterialPageRoute(builder: (_) => const QuizScreen()),
-                    ),
-                    child: const Text(
-                      'Start Quiz →',
-                      style: TextStyle(
-                        fontWeight: FontWeight.bold,
-                        fontFamily: 'Poppins',
-                        fontSize: 13,
-                      ),
-                    ),
+                    onPressed: () => Navigator.push(context,
+                        MaterialPageRoute(builder: (_) => QuizScreen())),
+                    child: const Text('Start Quiz →',
+                        style: TextStyle(
+                            fontWeight: FontWeight.bold,
+                            fontFamily: 'Poppins',
+                            fontSize: 13)),
                   ),
                 ],
               ),
             ),
             const SizedBox(height: 28),
 
-            const Text(
-              'Career Tracks',
-              style: TextStyle(
-                color: Colors.white,
-                fontSize: 18,
-                fontWeight: FontWeight.bold,
-                fontFamily: 'Poppins',
-              ),
-            ),
-            const SizedBox(height: 4),
-            const Text(
-              'Tap any track to explore its roadmap',
-              style: TextStyle(
-                color: AppTheme.textSecondary,
-                fontSize: 12,
-                fontFamily: 'Poppins',
-              ),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                const Text('Career Tracks',
+                    style: TextStyle(
+                        color: AppTheme.textPrimary,
+                        fontSize: 18,
+                        fontWeight: FontWeight.bold,
+                        fontFamily: 'Poppins')),
+                Text('Tap to explore',
+                    style: TextStyle(
+                        color: AppTheme.textSecondary,
+                        fontSize: 12,
+                        fontFamily: 'Poppins')),
+              ],
             ),
             const SizedBox(height: 14),
 
@@ -326,78 +370,73 @@ class _HomeTabState extends State<_HomeTab> {
               crossAxisCount: 2,
               crossAxisSpacing: 12,
               mainAxisSpacing: 12,
-              childAspectRatio: 1.1,
+              childAspectRatio: 1.0,
               children: [
                 CareerBadgeWidget(
                   title: 'Artificial Intelligence',
-                  icon: Icons.psychology,
+                  icon: Icons.psychology_rounded,
                   color: const Color(0xFF6C63FF),
+                  imagePath: 'assets/images/track_ai.svg',
                   onTap: () => Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (_) => const RoadmapScreen(
-                          careerTrack: 'Artificial Intelligence'),
-                    ),
-                  ),
+                      context,
+                      MaterialPageRoute(
+                          builder: (_) => const RoadmapScreen(
+                              careerTrack: 'Artificial Intelligence'))),
                 ),
                 CareerBadgeWidget(
                   title: 'Data Science',
-                  icon: Icons.bar_chart,
-                  color: const Color(0xFF03DAC6),
+                  icon: Icons.bar_chart_rounded,
+                  color: const Color(0xFF00897B),
+                  imagePath: 'assets/images/track_data.svg',
                   onTap: () => Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (_) =>
-                          const RoadmapScreen(careerTrack: 'Data Science'),
-                    ),
-                  ),
+                      context,
+                      MaterialPageRoute(
+                          builder: (_) => const RoadmapScreen(
+                              careerTrack: 'Data Science'))),
                 ),
                 CareerBadgeWidget(
                   title: 'Development',
-                  icon: Icons.code,
-                  color: const Color(0xFFFF6584),
+                  icon: Icons.code_rounded,
+                  color: const Color(0xFFE53935),
+                  imagePath: 'assets/images/track_coding.svg',
                   onTap: () => Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (_) => const RoadmapScreen(
-                          careerTrack: 'Software Development'),
-                    ),
-                  ),
+                      context,
+                      MaterialPageRoute(
+                          builder: (_) => const RoadmapScreen(
+                              careerTrack: 'Software Development'))),
                 ),
                 CareerBadgeWidget(
                   title: 'Security',
-                  icon: Icons.security,
-                  color: const Color(0xFFFFB347),
+                  icon: Icons.security_rounded,
+                  color: const Color(0xFFF57C00),
+                  imagePath: 'assets/images/track_security.svg',
                   onTap: () => Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (_) =>
-                          const RoadmapScreen(careerTrack: 'Cybersecurity'),
-                    ),
-                  ),
+                      context,
+                      MaterialPageRoute(
+                          builder: (_) => const RoadmapScreen(
+                              careerTrack: 'Cybersecurity'))),
                 ),
                 CareerBadgeWidget(
                   title: 'Software Eng',
-                  icon: Icons.engineering,
-                  color: const Color(0xFF4CAF50),
+                  icon: Icons.engineering_rounded,
+                  color: const Color(0xFF2E7D32),
+                  imagePath: 'assets/images/track_software.svg',
                   onTap: () => Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (_) => const RoadmapScreen(
-                          careerTrack: 'Software Engineering'),
-                    ),
-                  ),
+                      context,
+                      MaterialPageRoute(
+                          builder: (_) => const RoadmapScreen(
+                              careerTrack: 'Software Engineering'))),
                 ),
                 CareerBadgeWidget(
                   title: 'UI/UX Design',
-                  icon: Icons.design_services,
-                  color: const Color(0xFFE91E63),
+                  icon: Icons.design_services_rounded,
+                  color: AppTheme.primary,
+                  imagePath: 'assets/images/track_uiux.svg',
                   onTap: () => Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (_) => const RoadmapScreen(careerTrack: 'UI/UX'),
-                    ),
-                  ),
+                      context,
+                      MaterialPageRoute(
+                          builder: (_) =>
+                              const RoadmapScreen(careerTrack: 'UI/UX'))),
                 ),
               ],
             ),
