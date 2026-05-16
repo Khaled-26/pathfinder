@@ -101,7 +101,7 @@ class _ResultScreenState extends State<ResultScreen> {
 
   void _shareResult(String track) {
     Share.share(
-      '🎯 My PathFinder Career Result!\n\nMy recommended track is:\n✨ $track ✨\n\nFind your career path too! 🚀',
+      ' My PathFinder Career Result!\n\nMy recommended track is:\n $track \n\nFind your career path too! ',
       subject: 'My PathFinder Career Result',
     );
   }
@@ -399,41 +399,40 @@ class _ActionButton extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return SizedBox(
-      width: double.infinity,
-      child: isOutlined
-          ? OutlinedButton.icon(
-              style: OutlinedButton.styleFrom(
-                foregroundColor: color,
-                side: BorderSide(color: color),
-                padding: const EdgeInsets.symmetric(vertical: 14),
-                shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(14)),
-              ),
-              onPressed: isLoading ? null : onTap,
-              icon: isLoading
-                  ? SizedBox(
-                      width: 16,
-                      height: 16,
-                      child: CircularProgressIndicator(
-                          strokeWidth: 2, color: color))
-                  : Icon(icon),
-              label: Text(label,
-                  style: const TextStyle(
-                      fontFamily: 'Poppins', fontWeight: FontWeight.w600)),
-            )
-          : ElevatedButton.icon(
-              style: ElevatedButton.styleFrom(
-                backgroundColor: color,
-                padding: const EdgeInsets.symmetric(vertical: 14),
-                shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(14)),
-              ),
-              onPressed: onTap,
-              icon: Icon(icon),
-              label: Text(label,
-                  style: const TextStyle(
-                      fontFamily: 'Poppins', fontWeight: FontWeight.bold)),
-            ),
-    );
+        width: double.infinity,
+        child: isOutlined
+            ? OutlinedButton.icon(
+                style: OutlinedButton.styleFrom(
+                  foregroundColor: color,
+                  side: BorderSide(color: color),
+                  padding: const EdgeInsets.symmetric(vertical: 14),
+                  shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(14)),
+                ),
+                onPressed: isLoading ? null : onTap,
+                icon: isLoading
+                    ? SizedBox(
+                        width: 16,
+                        height: 16,
+                        child: CircularProgressIndicator(
+                            strokeWidth: 2, color: color))
+                    : Icon(icon),
+                label: Text(label,
+                    style: const TextStyle(
+                        fontFamily: 'Poppins', fontWeight: FontWeight.w600)),
+              )
+            : ElevatedButton.icon(
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: color,
+                  padding: const EdgeInsets.symmetric(vertical: 14),
+                  shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(14)),
+                ),
+                onPressed: onTap,
+                icon: Icon(icon),
+                label: Text(label,
+                    style: const TextStyle(
+                        fontFamily: 'Poppins', fontWeight: FontWeight.bold)),
+              ));
   }
 }
